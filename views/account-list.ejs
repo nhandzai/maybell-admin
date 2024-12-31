@@ -1,5 +1,4 @@
 <div class="p-4">
-  <!-- Filter Form -->
   <form id="filter-form" class="flex gap-4">
     <input
       type="text"
@@ -26,42 +25,10 @@
   <table class="w-full text-sm text-left rtl:text-right text-gray-500">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr>
-        <th scope="col" class="px-6 py-3">
-          Name
-          <button
-            id="sort-name"
-            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
-          >
-            Sort
-          </button>
-        </th>
-        <th scope="col" class="px-6 py-3">
-          Email
-          <button
-            id="sort-email"
-            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
-          >
-            Sort
-          </button>
-        </th>
-        <th scope="col" class="px-6 py-3">
-          Registration time
-          <button
-            id="sort-createdAt"
-            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
-          >
-            Sort
-          </button>
-        </th>
-        <th scope="col" class="px-6 py-3">
-          Role
-          <button
-            id="sort-role"
-            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
-          >
-            Sort
-          </button>
-        </th>
+        <th scope="col" class="px-6 py-3">Name</th>
+        <th scope="col" class="px-6 py-3">Email</th>
+        <th scope="col" class="px-6 py-3">Registration time</th>
+        <th scope="col" class="px-6 py-3">Role</th>
         <th scope="col" class="px-6 py-3">Actions</th>
       </tr>
     </thead>
@@ -100,55 +67,90 @@
     </tbody>
   </table>
 </div>
+<div class="pagination mt-4 flex justify-center">
+  <% for (let i = 1; i <= pageNumber; i++) { %>
+  <button
+    class="pagination-button px-4 py-2 text-sm rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700' %>"
+    data-page="<%= i %>"
+  >
+    <%= i %>
+  </button>
+  <% } %>
+</div>
 
 <script>
-  // Sort Table (existing code)
-  function sortTable(columnIndex, isAscending) {
-    const rows = Array.from(document.querySelectorAll("tbody tr"));
-    const sortedRows = rows.sort((rowA, rowB) => {
-      const cellA = rowA.cells[columnIndex].innerText.trim();
-      const cellB = rowB.cells[columnIndex].innerText.trim();
+  async function fetchAndUpdate(page) {
+    try {
+      const response = await fetch(`/accounts?page=${page}`);
+      if (!response.ok) throw new Error("Failed to fetch data");
 
-      if (cellA < cellB) return isAscending ? -1 : 1;
-      if (cellA > cellB) return isAscending ? 1 : -1;
-      return 0;
-    });
+      const data = await response.json();
 
-    const tbody = document.querySelector("tbody");
-    tbody.innerHTML = "";
-    sortedRows.forEach((row) => tbody.appendChild(row));
+      const tbody = document.getElementById("account-list");
+      tbody.innerHTML = data.accounts
+        .map((account) => {
+          return `
+              <tr class="bg-white border-b">
+                <th
+                  scope="row"
+                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                >
+                  ${account.fullName}
+                </th>
+                <td class="px-6 py-4">${account.email}</td>
+                <td class="px-6 py-4">${account.createdAt}</td>
+                <td class="px-6 py-4">
+                  ${account.isAdmin === 1 ? "Admin" : "Customer"}
+                </td>
+                <td class="flex px-6 py-4 gap-4">
+                  <button
+                    title="${account.isBan === 1 ? "Unban" : "Ban"}"
+                    class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+                    data-id="${account.id}"
+                  >
+                    ${account.isBan === 1 ? "Unban" : "Ban"}
+                  </button>
+                  <button
+                    class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+                    title="View"
+                    data-id="${account.id}"
+                  >
+                    View
+                  </button>
+                </td>
+              </tr>
+            `;
+        })
+        .join("");
+
+      const paginationContainer = document.querySelector(".pagination");
+      paginationContainer.innerHTML = Array.from(
+        { length: data.pageNumber },
+        (_, i) => `
+            <button
+              class="pagination-button px-4 py-2 text-sm rounded-lg ${
+                data.page === i + 1
+                  ? "bg-blue-500 text-white"
+                  : "bg-gray-300 text-gray-700"
+              }"
+              data-page="${i + 1}"
+            >
+              ${i + 1}
+            </button>
+          `
+      ).join("");
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
   }
 
-  let sortOrder = {
-    name: true,
-    email: true,
-    createdAt: true,
-    role: true,
-  };
-
-  document.getElementById("sort-name").addEventListener("click", function () {
-    sortTable(0, sortOrder.name);
-    sortOrder.name = !sortOrder.name;
+  document.querySelector(".pagination").addEventListener("click", (event) => {
+    if (event.target.classList.contains("pagination-button")) {
+      const page = event.target.getAttribute("data-page");
+      fetchAndUpdate(page);
+    }
   });
 
-  document.getElementById("sort-email").addEventListener("click", function () {
-    sortTable(1, sortOrder.email);
-    sortOrder.email = !sortOrder.email;
-  });
-
-  document
-    .getElementById("sort-createdAt")
-    .addEventListener("click", function () {
-      sortTable(2, sortOrder.createdAt);
-      sortOrder.createdAt = !sortOrder.createdAt;
-    });
-
-  document.getElementById("sort-role").addEventListener("click", function () {
-    sortTable(3, sortOrder.role);
-    sortOrder.role = !sortOrder.role;
-  });
-
-  // Handle Filter Form (logging the JSON)
   document
     .getElementById("filter-form")
     .addEventListener("submit", function (event) {

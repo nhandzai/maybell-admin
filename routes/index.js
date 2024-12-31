@@ -5,6 +5,6 @@ var router = express.Router();
 const accountController = require('../components/account/account-controller');
 
 /* GET home page. */
-router.get('/', accountController.getAccountPage);
+router.get('/accounts', accountController.getAccountPage);
 
 module.exports = router;
