@@ -19,6 +19,26 @@
       Filter
     </button>
   </form>
+
+  <form id="sort-form" class="flex gap-4 mt-4">
+    <select id="sort-field" class="px-4 py-2 border rounded">
+      <option value="fullName">Full Name</option>
+      <option value="email">Email</option>
+      <option value="createdAt">Created At</option>
+      <option value="isAdmin">Role</option>
+      <option value="isBan">Ban Status</option>
+    </select>
+    <select id="sort-order" class="px-4 py-2 border rounded">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Sort
+    </button>
+  </form>
 </div>
 
 <div class="relative overflow-x-auto">
@@ -82,8 +102,11 @@
   async function fetchAndUpdate(page) {
     try {
       const url = new URL(window.location);
+
       const fullNameFilter = url.searchParams.get("fullName") || "";
       const emailFilter = url.searchParams.get("email") || "";
+      const sortField = url.searchParams.get("sortField") || "fullName";
+      const sortOrder = url.searchParams.get("sortOrder") || "asc";
 
       url.searchParams.set("page", page);
       window.history.pushState({}, "", url);
@@ -91,7 +114,9 @@
       const response = await fetch(
         `/api/accounts?page=${page}&fullName=${encodeURIComponent(
           fullNameFilter
-        )}&email=${encodeURIComponent(emailFilter)}`
+        )}&email=${encodeURIComponent(
+          emailFilter
+        )}&sortField=${sortField}&sortOrder=${sortOrder}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch data");
@@ -174,7 +199,24 @@
       const url = new URL(window.location);
       url.searchParams.set("fullName", fullNameFilter);
       url.searchParams.set("email", emailFilter);
-      url.searchParams.set("page", 1);
+      url.searchParams.set("page", 1); 
+      window.history.pushState({}, "", url);
+
+      fetchAndUpdate(1);
+    });
+
+  document
+    .getElementById("sort-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const sortField = document.getElementById("sort-field").value;
+      const sortOrder = document.getElementById("sort-order").value;
+
+      const url = new URL(window.location);
+      url.searchParams.set("sortField", sortField);
+      url.searchParams.set("sortOrder", sortOrder);
+      url.searchParams.set("page", 1); 
       window.history.pushState({}, "", url);
 
       fetchAndUpdate(1);
