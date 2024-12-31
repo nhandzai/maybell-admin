@@ -1,64 +1,167 @@
-<div class="relative overflow-x-auto">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 ">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50  ">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Email
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Registration time
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Actions
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr class="bg-white border-b  ">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                    Apple MacBook Pro 17"
-                </th>
-                <td class="px-6 py-4">
-                    Silverasdasdasdasdasd
-                </td>
-                <td class="px-6 py-4">
-                    Laptop
-                </td>
-                <td class="px-6 py-4">
-                    Ban
-                </td>
-            </tr>
-            <tr class="bg-white border-b  ">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                    Microsoft Surface Pro
-                </th>
-                <td class="px-6 py-4">
-                    White
-                </td>
-                <td class="px-6 py-4">
-                    Laptop PC
-                </td>
-                <td class="px-6 py-4">
-                    Ban
-                </td>
-            </tr>
-            <tr class="bg-white ">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap ">
-                    Magic Mouse 2
-                </th>
-                <td class="px-6 py-4">
-                    Black
-                </td>
-                <td class="px-6 py-4">
-                    Accessories
-                </td>
-                <td class="px-6 py-4">
-                    Unban
-                </td>
-            </tr>
-        </tbody>
-    </table>
+<div class="p-4">
+  <!-- Filter Form -->
+  <form id="filter-form" class="flex gap-4">
+    <input
+      type="text"
+      id="filter-name"
+      placeholder="Filter by full name"
+      class="px-4 py-2 border rounded"
+    />
+    <input
+      type="text"
+      id="filter-email"
+      placeholder="Filter by email"
+      class="px-4 py-2 border rounded"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Filter
+    </button>
+  </form>
 </div>
+
+<div class="relative overflow-x-auto">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">
+          Name
+          <button
+            id="sort-name"
+            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+          >
+            Sort
+          </button>
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Email
+          <button
+            id="sort-email"
+            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+          >
+            Sort
+          </button>
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Registration time
+          <button
+            id="sort-createdAt"
+            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+          >
+            Sort
+          </button>
+        </th>
+        <th scope="col" class="px-6 py-3">
+          Role
+          <button
+            id="sort-role"
+            class="ml-2 px-2 py-1 text-sm bg-gray-200 hover:bg-gray-300 rounded"
+          >
+            Sort
+          </button>
+        </th>
+        <th scope="col" class="px-6 py-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="account-list">
+      <% accounts.forEach(account => { %>
+      <tr class="bg-white border-b">
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          <%= account.fullName %>
+        </th>
+        <td class="px-6 py-4"><%= account.email %></td>
+        <td class="px-6 py-4"><%= account.createdAt %></td>
+        <td class="px-6 py-4">
+          <%= account.isAdmin === 1 ? 'Admin' : 'Customer' %>
+        </td>
+        <td class="flex px-6 py-4 gap-4">
+          <button
+            title="<%= account.isBan === 1 ? 'Unban' : 'Ban' %>"
+            class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+            data-id="<%= account.id %>"
+          >
+            <%= account.isBan === 1 ? 'Unban' : 'Ban' %>
+          </button>
+          <button
+            class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+            title="View"
+            data-id="<%= account.id %>"
+          >
+            View
+          </button>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  // Sort Table (existing code)
+  function sortTable(columnIndex, isAscending) {
+    const rows = Array.from(document.querySelectorAll("tbody tr"));
+    const sortedRows = rows.sort((rowA, rowB) => {
+      const cellA = rowA.cells[columnIndex].innerText.trim();
+      const cellB = rowB.cells[columnIndex].innerText.trim();
+
+      if (cellA < cellB) return isAscending ? -1 : 1;
+      if (cellA > cellB) return isAscending ? 1 : -1;
+      return 0;
+    });
+
+    const tbody = document.querySelector("tbody");
+    tbody.innerHTML = "";
+    sortedRows.forEach((row) => tbody.appendChild(row));
+  }
+
+  let sortOrder = {
+    name: true,
+    email: true,
+    createdAt: true,
+    role: true,
+  };
+
+  document.getElementById("sort-name").addEventListener("click", function () {
+    sortTable(0, sortOrder.name);
+    sortOrder.name = !sortOrder.name;
+  });
+
+  document.getElementById("sort-email").addEventListener("click", function () {
+    sortTable(1, sortOrder.email);
+    sortOrder.email = !sortOrder.email;
+  });
+
+  document
+    .getElementById("sort-createdAt")
+    .addEventListener("click", function () {
+      sortTable(2, sortOrder.createdAt);
+      sortOrder.createdAt = !sortOrder.createdAt;
+    });
+
+  document.getElementById("sort-role").addEventListener("click", function () {
+    sortTable(3, sortOrder.role);
+    sortOrder.role = !sortOrder.role;
+  });
+
+  // Handle Filter Form (logging the JSON)
+  document
+    .getElementById("filter-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const fullNameFilter = document.getElementById("filter-name").value;
+      const emailFilter = document.getElementById("filter-email").value;
+
+      const filters = {
+        fullName: fullNameFilter,
+        email: emailFilter,
+      };
+
+      console.log("Filter applied:", JSON.stringify(filters));
+    });
+</script>
