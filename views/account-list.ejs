@@ -81,47 +81,57 @@
 <script>
   async function fetchAndUpdate(page) {
     try {
-      const response = await fetch(`/api/accounts?page=${page}`);
-      if (!response.ok) throw new Error("Failed to fetch data");
       const url = new URL(window.location);
+      const fullNameFilter = url.searchParams.get("fullName") || "";
+      const emailFilter = url.searchParams.get("email") || "";
+
       url.searchParams.set("page", page);
       window.history.pushState({}, "", url);
+
+      const response = await fetch(
+        `/api/accounts?page=${page}&fullName=${encodeURIComponent(
+          fullNameFilter
+        )}&email=${encodeURIComponent(emailFilter)}`
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch data");
+
       const data = await response.json();
 
       const tbody = document.getElementById("account-list");
       tbody.innerHTML = data.accounts
         .map((account) => {
           return `
-              <tr class="bg-white border-b">
-                <th
-                  scope="row"
-                  class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                >
-                  ${account.fullName}
-                </th>
-                <td class="px-6 py-4">${account.email}</td>
-                <td class="px-6 py-4">${account.createdAt}</td>
-                <td class="px-6 py-4">
-                  ${account.isAdmin === 1 ? "Admin" : "Customer"}
-                </td>
-                <td class="flex px-6 py-4 gap-4">
-                  <button
-                    title="${account.isBan === 1 ? "Unban" : "Ban"}"
-                    class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
-                    data-id="${account.id}"
+                <tr class="bg-white border-b">
+                  <th
+                    scope="row"
+                    class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                   >
-                    ${account.isBan === 1 ? "Unban" : "Ban"}
-                  </button>
-                  <button
-                    class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
-                    title="View"
-                    data-id="${account.id}"
-                  >
-                    View
-                  </button>
-                </td>
-              </tr>
-            `;
+                    ${account.fullName}
+                  </th>
+                  <td class="px-6 py-4">${account.email}</td>
+                  <td class="px-6 py-4">${account.createdAt}</td>
+                  <td class="px-6 py-4">
+                    ${account.isAdmin === 1 ? "Admin" : "Customer"}
+                  </td>
+                  <td class="flex px-6 py-4 gap-4">
+                    <button
+                      title="${account.isBan === 1 ? "Unban" : "Ban"}"
+                      class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+                      data-id="${account.id}"
+                    >
+                      ${account.isBan === 1 ? "Unban" : "Ban"}
+                    </button>
+                    <button
+                      class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+                      title="View"
+                      data-id="${account.id}"
+                    >
+                      View
+                    </button>
+                  </td>
+                </tr>
+              `;
         })
         .join("");
 
@@ -129,29 +139,29 @@
       paginationContainer.innerHTML = Array.from(
         { length: data.pageNumber },
         (_, i) => `
-            <button
-              class="pagination-button px-4 py-2 text-sm rounded-lg ${
-                data.page === i + 1
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-300 text-gray-700"
-              }"
-              data-page="${i + 1}"
-            >
-              ${i + 1}
-            </button>
-          `
+              <button
+                class="pagination-button px-4 py-2 text-sm rounded-lg ${
+                  data.page === i + 1
+                    ? "bg-blue-500 text-white"
+                    : "bg-gray-300 text-gray-700"
+                }"
+                data-page="${i + 1}"
+              >
+                ${i + 1}
+              </button>
+            `
       ).join("");
+
+      document.querySelectorAll(".pagination-button").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          const page = button.getAttribute("data-page");
+          fetchAndUpdate(page);
+        });
+      });
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   }
-
-  document.querySelector(".pagination").addEventListener("click", (event) => {
-    if (event.target.classList.contains("pagination-button")) {
-      const page = event.target.getAttribute("data-page");
-      fetchAndUpdate(page);
-    }
-  });
 
   document
     .getElementById("filter-form")
@@ -161,11 +171,18 @@
       const fullNameFilter = document.getElementById("filter-name").value;
       const emailFilter = document.getElementById("filter-email").value;
 
-      const filters = {
-        fullName: fullNameFilter,
-        email: emailFilter,
-      };
+      const url = new URL(window.location);
+      url.searchParams.set("fullName", fullNameFilter);
+      url.searchParams.set("email", emailFilter);
+      url.searchParams.set("page", 1);
+      window.history.pushState({}, "", url);
 
-      console.log("Filter applied:", JSON.stringify(filters));
+      fetchAndUpdate(1);
     });
+
+  window.addEventListener("load", () => {
+    const url = new URL(window.location);
+    const page = url.searchParams.get("page") || 1;
+    fetchAndUpdate(page);
+  });
 </script>
