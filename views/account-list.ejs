@@ -81,9 +81,11 @@
 <script>
   async function fetchAndUpdate(page) {
     try {
-      const response = await fetch(`/accounts?page=${page}`);
+      const response = await fetch(`/api/accounts?page=${page}`);
       if (!response.ok) throw new Error("Failed to fetch data");
-
+      const url = new URL(window.location);
+      url.searchParams.set("page", page);
+      window.history.pushState({}, "", url);
       const data = await response.json();
 
       const tbody = document.getElementById("account-list");
