@@ -3,13 +3,19 @@
     <input
       type="text"
       id="filter-name"
-      placeholder="Filter by full name"
+      placeholder="Filter by name"
       class="px-4 py-2 border rounded"
     />
     <input
+    type="text"
+    id="filter-brand"
+    placeholder="Filter by brand"
+    class="px-4 py-2 border rounded"
+    />
+    <input
       type="text"
-      id="filter-email"
-      placeholder="Filter by email"
+      id="filter-category"
+      placeholder="Filter by category"
       class="px-4 py-2 border rounded"
     />
     <button
@@ -22,11 +28,13 @@
 
   <form id="sort-form" class="flex gap-4 mt-4">
     <select id="sort-field" class="px-4 py-2 border rounded">
-      <option value="fullName">Full Name</option>
-      <option value="email">Email</option>
-      <option value="createdAt">Created At</option>
-      <option value="isAdmin">Role</option>
-      <option value="isBan">Ban Status</option>
+      <option value="name">Name</option>
+      <option value="price">Price</option>
+      <option value="brand">Brand</option>
+      <option value="category">Category</option>
+      <option value="stockQuantity">Stock Quantity</option>
+      <option value="totalPurchase">Total Purchase</option>
+      <option value="createdAt">Creation time</option>
     </select>
     <select id="sort-order" class="px-4 py-2 border rounded">
       <option value="asc">Ascending</option>
@@ -66,10 +74,10 @@
         </th>
         <td class="px-6 py-4"><%= product.name %></td>
         <td class="px-6 py-4"><%= product.price %></td>
-        <td class="px-6 py-4"><%= product.brandId %></td>
-        <td class="px-6 py-4"><%= product.categoryId %></td>
+        <td class="px-6 py-4"><%= product.brand %></td>
+        <td class="px-6 py-4"><%= product.category %></td>
         <td class="px-6 py-4"><%= product.stockQuantity %></td>
-        <td class="px-6 py-4"><%= product.stockQuantity %></td>
+        <td class="px-6 py-4"><%= product.totalPurchase %></td>
         <td class="px-6 py-4"><%= product.createdAt %></td>
       </tr>
       <% }); %>
@@ -92,19 +100,22 @@
     try {
       const url = new URL(window.location);
 
-      const fullNameFilter = url.searchParams.get("fullName") || "";
-      const emailFilter = url.searchParams.get("email") || "";
-      const sortField = url.searchParams.get("sortField") || "fullName";
+      const nameFilter = url.searchParams.get("name") || "";
+      const categoryFilter = url.searchParams.get("category") || "";
+      const brandFilter = url.searchParams.get("brand") || "";
+      const sortField = url.searchParams.get("sortField") || "name";
       const sortOrder = url.searchParams.get("sortOrder") || "asc";
 
       url.searchParams.set("page", page);
       window.history.pushState({}, "", url);
 
       const response = await fetch(
-        `/api/products?page=${page}&fullName=${encodeURIComponent(
-          fullNameFilter
-        )}&email=${encodeURIComponent(
-          emailFilter
+        `/api/products?page=${page}&name=${encodeURIComponent(
+          nameFilter
+        )}&category=${encodeURIComponent(
+          categoryFilter
+        )}&brand=${encodeURIComponent(
+          brandFilter
         )}&sortField=${sortField}&sortOrder=${sortOrder}`
       );
 
@@ -125,10 +136,10 @@
         </th>
         <td class="px-6 py-4">${ product.name }</td>
         <td class="px-6 py-4">${ product.price }</td>
-        <td class="px-6 py-4">${ product.brandId }</td>
-        <td class="px-6 py-4">${ product.categoryId }</td>
+        <td class="px-6 py-4">${ product.brand }</td>
+        <td class="px-6 py-4">${ product.category }</td>
         <td class="px-6 py-4">${ product.stockQuantity }</td>
-        <td class="px-6 py-4">${ product.stockQuantity }</td>
+        <td class="px-6 py-4">${ product.totalPurchase }</td>
         <td class="px-6 py-4">${ product.createdAt }</td>
       </tr>
                 `;
@@ -168,12 +179,14 @@
     .addEventListener("submit", function (event) {
       event.preventDefault();
 
-      const fullNameFilter = document.getElementById("filter-name").value;
-      const emailFilter = document.getElementById("filter-email").value;
+      const nameFilter = document.getElementById("filter-name").value;
+      const categoryFilter = document.getElementById("filter-category").value;
+      const brandFilter = document.getElementById("filter-brand").value;
 
       const url = new URL(window.location);
-      url.searchParams.set("fullName", fullNameFilter);
-      url.searchParams.set("email", emailFilter);
+      url.searchParams.set("name", nameFilter);
+      url.searchParams.set("category", categoryFilter);
+      url.searchParams.set("brand", brandFilter);
       url.searchParams.set("page", 1);
       window.history.pushState({}, "", url);
 
@@ -235,7 +248,6 @@
           const result = await response.json();
 
           if (response.ok) {
-            // Create a modal element dynamically
             const modalContainer = document.createElement("div");
             modalContainer.innerHTML = `
           <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
@@ -247,16 +259,16 @@
                     <label class="w-1/4 font-semibold">Full Name:</label>
                     <input
                       type="text"
-                      value="${result.product.fullName}"
+                      value="${result.product.name}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Email:</label>
+                    <label class="w-1/4 font-semibold">category:</label>
                     <input
                       type="text"
-                      value="${result.product.email}"
+                      value="${result.product.category}"
                       readonly
                       class="border p-2 w-3/4"
                     />

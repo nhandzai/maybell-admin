@@ -8,15 +8,17 @@ async function getProducts(req) {
     const productsData = JSON.parse(jsonData);
 
     const page = parseInt(req.query.page) || 1;
-    const emailFilter = req.query.email || '';
-    const fullNameFilter = req.query.fullName || '';
+    const categoryFilter = req.query.category || '';
+    const nameFilter = req.query.name || '';
+    const brandFilter = req.query.brand || '';
     const sortField = req.query.sortField || '';
     const sortOrder = req.query.sortOrder || '';
 
     const filteredProducts = productsData.filter(product => {
-        const matchesEmail = emailFilter ? product.email.toLowerCase().includes(emailFilter.toLowerCase()) : true;
-        const matchesFullName = fullNameFilter ? product.fullName.toLowerCase().includes(fullNameFilter.toLowerCase()) : true;
-        return matchesEmail && matchesFullName;
+        const matchesBrand = brandFilter ? product.brand.toLowerCase().includes(brandFilter.toLowerCase()) : true;
+        const matchesCategory = categoryFilter ? product.category.toLowerCase().includes(categoryFilter.toLowerCase()) : true;
+        const matchesName = nameFilter ? product.name.toLowerCase().includes(nameFilter.toLowerCase()) : true;
+        return matchesCategory && matchesName && matchesBrand;
     });
 
     if (sortField) {
