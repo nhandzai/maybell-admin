@@ -44,4 +44,25 @@ async function getAccounts(req) {
     };
 }
 
-module.exports = { getAccounts };
+async function getAccountById(id) {
+    const filePath = path.join(__dirname, '../../data/account-list.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const accountsData = JSON.parse(jsonData);
+
+    const account = accountsData.find(account => account.id === id);
+
+    if (!account) {
+        throw new Error(`Account with ID ${id} not found.`);
+    }
+
+    account.isBan = account.isBan === 1 ? 0 : 1;
+    await fs.writeFile(filePath, JSON.stringify(accountsData, null, 2), 'utf8');
+
+    return {
+        message: `Account ${account.isBan === 1 ? 'banned' : 'unbanned'}`,
+        account: account
+    };
+}
+
+
+module.exports = { getAccounts, getAccountById };

@@ -5,5 +5,6 @@ var router = express.Router();
 const accountController = require('../components/account/account-controller');
 
 router.get('/accounts', accountController.getAccountPageAPI);
+router.post('/banAccount', accountController.banAccount);
 
 module.exports = router;

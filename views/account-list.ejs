@@ -187,7 +187,7 @@
       console.error("Error fetching data:", error);
     }
   }
-
+  //filter-form
   document
     .getElementById("filter-form")
     .addEventListener("submit", function (event) {
@@ -199,12 +199,12 @@
       const url = new URL(window.location);
       url.searchParams.set("fullName", fullNameFilter);
       url.searchParams.set("email", emailFilter);
-      url.searchParams.set("page", 1); 
+      url.searchParams.set("page", 1);
       window.history.pushState({}, "", url);
 
       fetchAndUpdate(1);
     });
-
+  //sort-form
   document
     .getElementById("sort-form")
     .addEventListener("submit", function (event) {
@@ -216,11 +216,45 @@
       const url = new URL(window.location);
       url.searchParams.set("sortField", sortField);
       url.searchParams.set("sortOrder", sortOrder);
-      url.searchParams.set("page", 1); 
+      url.searchParams.set("page", 1);
       window.history.pushState({}, "", url);
 
       fetchAndUpdate(1);
     });
+
+  //ban and unBan button
+  const accountList = document.getElementById("account-list");
+  accountList.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-id]");
+
+    if (button) {
+      console.log("Button clicked");
+
+      const accountId = button.getAttribute("data-id");
+
+      try {
+        const response = await fetch("/api/banAccount", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ id: accountId }),
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert(result.message);
+          button.innerText = result.account.isBan === 1 ? "Unban" : "Ban";
+          button.title = result.account.isBan === 1 ? "Unban" : "Ban";
+        } else {
+          alert("Failed to update the account");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    }
+  });
 
   window.addEventListener("load", () => {
     const url = new URL(window.location);
