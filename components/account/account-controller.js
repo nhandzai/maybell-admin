@@ -1,5 +1,5 @@
 const { renderAccountPage } = require('./account-view');
-const { getAccounts, getAccountById } = require('./account-model');
+const { getAccounts, banAccountById, getAccountDetailById } = require('./account-model');
 
 async function getAccountPage(req, res, next) {
   try {
@@ -15,6 +15,7 @@ async function getAccountPageAPI(req, res, next) {
     const accounts = await getAccounts(req);
     res.json(accounts)
   } catch (error) {
+    res.status(500).json({ error: error.message });
     next(error);
   }
 }
@@ -23,16 +24,31 @@ async function banAccount(req, res, next) {
   try {
     const accountId = req.body.id;
     if (!accountId) {
-        throw new Error("Account ID is required.");
+      throw new Error("Account ID is required.");
     }
 
-    const data = await getAccountById(accountId);
+    const data = await banAccountById(accountId);
     res.json(data);
   } catch (error) {
-    console.error('Error in banAccount controller:', error);
-    res.status(500).json({ error: error.message }); 
+    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+async function getAccountDetail(req, res, next) {
+  try {
+    const accountId = req.query.id;
+    if (!accountId) {
+      throw new Error("Account ID is required.");
+    }
+
+    const data = await getAccountDetailById(accountId);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    next(error);
   }
 }
 
 
-module.exports = { getAccountPage, getAccountPageAPI, banAccount };
+module.exports = { getAccountPage, getAccountPageAPI, banAccount, getAccountDetail };

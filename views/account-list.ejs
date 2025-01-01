@@ -224,34 +224,186 @@
 
   //ban and unBan button
   const accountList = document.getElementById("account-list");
+
   accountList.addEventListener("click", async (event) => {
     const button = event.target.closest("button[data-id]");
-
+    console.log("Button clicked");
     if (button) {
-      console.log("Button clicked");
-
       const accountId = button.getAttribute("data-id");
+      const action = button.getAttribute("title");
+      console.log(action);
+      if (action === "Ban" || action === "Unban") {
+        try {
+          const response = await fetch("/api/banAccount", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: accountId }),
+          });
 
-      try {
-        const response = await fetch("/api/banAccount", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ id: accountId }),
-        });
+          const result = await response.json();
 
-        const result = await response.json();
-
-        if (response.ok) {
-          alert(result.message);
-          button.innerText = result.account.isBan === 1 ? "Unban" : "Ban";
-          button.title = result.account.isBan === 1 ? "Unban" : "Ban";
-        } else {
-          alert("Failed to update the account");
+          if (response.ok) {
+            alert(result.message);
+            button.innerText = result.account.isBan === 1 ? "Unban" : "Ban";
+            button.title = result.account.isBan === 1 ? "Unban" : "Ban";
+          } else {
+            alert("Failed to update the account");
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
-      } catch (error) {
-        console.error("Error:", error);
+      } else if (action === "View") {
+        try {
+          const response = await fetch(`/api/accountDetail?id=${accountId}`);
+          const result = await response.json();
+
+          if (response.ok) {
+            // Create a modal element dynamically
+            const modalContainer = document.createElement("div");
+            modalContainer.innerHTML = `
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
+            <h2 class="text-xl font-bold mb-4">User Details</h2>
+            <form>
+              <div class="flex flex-col gap-4">
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Full Name:</label>
+                  <input
+                    type="text"
+                    value="${result.account.fullName}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Email:</label>
+                  <input
+                    type="text"
+                    value="${result.account.email}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Id:</label>
+                  <input
+                    type="text"
+                    value="${result.account.id}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Role:</label>
+                  <input
+                    type="text"
+                    value="${
+                      result.account.isAdmin === 1 ? "Admin" : "Customer"
+                    }"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Ban Status:</label>
+                  <input
+                    type="text"
+                    value="${
+                      result.account.isBan === 1 ? "Ban" : "Not Ban"
+                    }"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Country:</label>
+                  <input
+                    type="text"
+                    value="${result.account.country}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">City:</label>
+                  <input
+                    type="text"
+                    value="${result.account.city}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Phone:</label>
+                  <input
+                    type="text"
+                    value="${result.account.phone}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Sex:</label>
+                  <input
+                    type="text"
+                    value="${result.account.sex}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Create Time:</label>
+                  <input
+                    type="text"
+                    value="${result.account.createdAt}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Bio:</label>
+                  <textarea
+                    readonly
+                    class="border p-2 w-3/4"
+                  >${result.account.bio}</textarea>
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Verified:</label>
+                  <input
+                    type="text"
+                    value="${result.account.isVerified ? "Yes" : "No"}"
+                    readonly
+                    class="border p-2 w-3/4"
+                  />
+                </div>
+                <div class="flex">
+                  <label class="w-1/4 font-semibold">Avatar:</label>
+                  <img src='${result.account.avatar}' alt="avatar" width="320" height="120 object-contain ">
+                </div>
+              </div>
+            </form>
+            <button
+              onclick="closeModal()"
+              class="mt-4 text-white bg-red-500 px-4 py-2 rounded-lg"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      `;
+
+            document.body.appendChild(modalContainer);
+            window.closeModal = function () {
+              document.body.removeChild(modalContainer);
+            };
+          } else {
+            alert("Failed to fetch the account details");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
       }
     }
   });

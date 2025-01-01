@@ -10,7 +10,7 @@ async function getAccounts(req) {
     const page = parseInt(req.query.page) || 1;
     const emailFilter = req.query.email || '';
     const fullNameFilter = req.query.fullName || '';
-    const sortField = req.query.sortField || ''; 
+    const sortField = req.query.sortField || '';
     const sortOrder = req.query.sortOrder || '';
 
     const filteredAccounts = accountsData.filter(account => {
@@ -44,7 +44,7 @@ async function getAccounts(req) {
     };
 }
 
-async function getAccountById(id) {
+async function banAccountById(id) {
     const filePath = path.join(__dirname, '../../data/account-list.json');
     const jsonData = await fs.readFile(filePath, 'utf8');
     const accountsData = JSON.parse(jsonData);
@@ -64,5 +64,21 @@ async function getAccountById(id) {
     };
 }
 
+async function getAccountDetailById(id) {
+    const filePath = path.join(__dirname, '../../data/account-list-detail.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const accountsData = JSON.parse(jsonData);
 
-module.exports = { getAccounts, getAccountById };
+    const account = accountsData.find(account => account.id === id);
+
+    if (!account) {
+        throw new Error(`Account with ID ${id} not found.`);
+    }
+    return {
+        message: `Details of Account ${id}`,
+        account: account
+    }
+}
+
+
+module.exports = { getAccounts, banAccountById, getAccountDetailById };
