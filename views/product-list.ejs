@@ -1,0 +1,391 @@
+<div class="p-4">
+  <form id="filter-form" class="flex gap-4">
+    <input
+      type="text"
+      id="filter-name"
+      placeholder="Filter by full name"
+      class="px-4 py-2 border rounded"
+    />
+    <input
+      type="text"
+      id="filter-email"
+      placeholder="Filter by email"
+      class="px-4 py-2 border rounded"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Filter
+    </button>
+  </form>
+
+  <form id="sort-form" class="flex gap-4 mt-4">
+    <select id="sort-field" class="px-4 py-2 border rounded">
+      <option value="fullName">Full Name</option>
+      <option value="email">Email</option>
+      <option value="createdAt">Created At</option>
+      <option value="isAdmin">Role</option>
+      <option value="isBan">Ban Status</option>
+    </select>
+    <select id="sort-order" class="px-4 py-2 border rounded">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Sort
+    </button>
+  </form>
+</div>
+
+<div class="relative overflow-x-auto">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">Id</th>
+        <th scope="col" class="px-6 py-3">Name</th>
+        <th scope="col" class="px-6 py-3">Price</th>
+        <th scope="col" class="px-6 py-3">Brand</th>
+        <th scope="col" class="px-6 py-3">Category</th>
+        <th scope="col" class="px-6 py-3">Stock Quantity</th>
+        <th scope="col" class="px-6 py-3">Total Purchase</th>
+        <th scope="col" class="px-6 py-3">Created At</th>
+      </tr>
+    </thead>
+    <tbody id="product-list">
+      <% products.forEach(product => { %>
+      <tr class="bg-white border-b">
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          <%= product.id %>
+        </th>
+        <td class="px-6 py-4"><%= product.name %></td>
+        <td class="px-6 py-4"><%= product.price %></td>
+        <td class="px-6 py-4"><%= product.brandId %></td>
+        <td class="px-6 py-4"><%= product.categoryId %></td>
+        <td class="px-6 py-4"><%= product.stockQuantity %></td>
+        <td class="px-6 py-4"><%= product.stockQuantity %></td>
+        <td class="px-6 py-4"><%= product.createdAt %></td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<div class="pagination mt-4 flex justify-center">
+  <% for (let i = 1; i <= pageNumber; i++) { %>
+  <button
+    class="pagination-button px-4 py-2 text-sm rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700' %>"
+    data-page="<%= i %>"
+  >
+    <%= i %>
+  </button>
+  <% } %>
+</div>
+
+<script>
+  async function fetchAndUpdate(page) {
+    try {
+      const url = new URL(window.location);
+
+      const fullNameFilter = url.searchParams.get("fullName") || "";
+      const emailFilter = url.searchParams.get("email") || "";
+      const sortField = url.searchParams.get("sortField") || "fullName";
+      const sortOrder = url.searchParams.get("sortOrder") || "asc";
+
+      url.searchParams.set("page", page);
+      window.history.pushState({}, "", url);
+
+      const response = await fetch(
+        `/api/products?page=${page}&fullName=${encodeURIComponent(
+          fullNameFilter
+        )}&email=${encodeURIComponent(
+          emailFilter
+        )}&sortField=${sortField}&sortOrder=${sortOrder}`
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch data");
+
+      const data = await response.json();
+
+      const tbody = document.getElementById("product-list");
+      tbody.innerHTML = data.products
+        .map((product) => {
+          return `
+      <tr class="bg-white border-b">
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          ${ product.id }
+        </th>
+        <td class="px-6 py-4">${ product.name }</td>
+        <td class="px-6 py-4">${ product.price }</td>
+        <td class="px-6 py-4">${ product.brandId }</td>
+        <td class="px-6 py-4">${ product.categoryId }</td>
+        <td class="px-6 py-4">${ product.stockQuantity }</td>
+        <td class="px-6 py-4">${ product.stockQuantity }</td>
+        <td class="px-6 py-4">${ product.createdAt }</td>
+      </tr>
+                `;
+        })
+        .join("");
+
+      const paginationContainer = document.querySelector(".pagination");
+      paginationContainer.innerHTML = Array.from(
+        { length: data.pageNumber },
+        (_, i) => `
+                <button
+                  class="pagination-button px-4 py-2 text-sm rounded-lg ${
+                    data.page === i + 1
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-300 text-gray-700"
+                  }"
+                  data-page="${i + 1}"
+                >
+                  ${i + 1}
+                </button>
+              `
+      ).join("");
+
+      document.querySelectorAll(".pagination-button").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          const page = button.getAttribute("data-page");
+          fetchAndUpdate(page);
+        });
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+  //filter-form
+  document
+    .getElementById("filter-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const fullNameFilter = document.getElementById("filter-name").value;
+      const emailFilter = document.getElementById("filter-email").value;
+
+      const url = new URL(window.location);
+      url.searchParams.set("fullName", fullNameFilter);
+      url.searchParams.set("email", emailFilter);
+      url.searchParams.set("page", 1);
+      window.history.pushState({}, "", url);
+
+      fetchAndUpdate(1);
+    });
+  //sort-form
+  document
+    .getElementById("sort-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const sortField = document.getElementById("sort-field").value;
+      const sortOrder = document.getElementById("sort-order").value;
+
+      const url = new URL(window.location);
+      url.searchParams.set("sortField", sortField);
+      url.searchParams.set("sortOrder", sortOrder);
+      url.searchParams.set("page", 1);
+      window.history.pushState({}, "", url);
+
+      fetchAndUpdate(1);
+    });
+
+  //ban and unBan button
+  const productList = document.getElementById("product-list");
+
+  productList.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-id]");
+    console.log("Button clicked");
+    if (button) {
+      const productId = button.getAttribute("data-id");
+      const action = button.getAttribute("title");
+      console.log(action);
+      if (action === "Ban" || action === "Unban") {
+        try {
+          const response = await fetch("/api/banproduct", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: productId }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert(result.message);
+            button.innerText = result.product.isBan === 1 ? "Unban" : "Ban";
+            button.title = result.product.isBan === 1 ? "Unban" : "Ban";
+          } else {
+            alert("Failed to update the product");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      } else if (action === "View") {
+        try {
+          const response = await fetch(`/api/productDetail?id=${productId}`);
+          const result = await response.json();
+
+          if (response.ok) {
+            // Create a modal element dynamically
+            const modalContainer = document.createElement("div");
+            modalContainer.innerHTML = `
+          <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
+              <h2 class="text-xl font-bold mb-4">User Details</h2>
+              <form>
+                <div class="flex flex-col gap-4">
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Full Name:</label>
+                    <input
+                      type="text"
+                      value="${result.product.fullName}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Email:</label>
+                    <input
+                      type="text"
+                      value="${result.product.email}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Id:</label>
+                    <input
+                      type="text"
+                      value="${result.product.id}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Role:</label>
+                    <input
+                      type="text"
+                      value="${
+                        result.product.isAdmin === 1 ? "Admin" : "Customer"
+                      }"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Ban Status:</label>
+                    <input
+                      type="text"
+                      value="${result.product.isBan === 1 ? "Ban" : "Not Ban"}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Country:</label>
+                    <input
+                      type="text"
+                      value="${result.product.country}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">City:</label>
+                    <input
+                      type="text"
+                      value="${result.product.city}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Phone:</label>
+                    <input
+                      type="text"
+                      value="${result.product.phone}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Sex:</label>
+                    <input
+                      type="text"
+                      value="${result.product.sex}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Create Time:</label>
+                    <input
+                      type="text"
+                      value="${result.product.createdAt}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Bio:</label>
+                    <textarea
+                      readonly
+                      class="border p-2 w-3/4"
+                    >${result.product.bio}</textarea>
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Verified:</label>
+                    <input
+                      type="text"
+                      value="${result.product.isVerified ? "Yes" : "No"}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Avatar:</label>
+                    <img src='${
+                      result.product.avatar
+                    }' alt="avatar" width="320" height="120 object-contain ">
+                  </div>
+                </div>
+              </form>
+              <button
+                onclick="closeModal()"
+                class="mt-4 text-white bg-red-500 px-4 py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        `;
+
+            document.body.appendChild(modalContainer);
+            window.closeModal = function () {
+              document.body.removeChild(modalContainer);
+            };
+          } else {
+            alert("Failed to fetch the product details");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    }
+  });
+
+  window.addEventListener("load", () => {
+    const url = new URL(window.location);
+    const page = url.searchParams.get("page") || 1;
+    fetchAndUpdate(page);
+  });
+</script>
