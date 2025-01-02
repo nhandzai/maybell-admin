@@ -61,6 +61,7 @@
         <th scope="col" class="px-6 py-3">Stock Quantity</th>
         <th scope="col" class="px-6 py-3">Total Purchase</th>
         <th scope="col" class="px-6 py-3">Created At</th>
+        <th scope="col" class="px-6 py-3">Actions</th>
       </tr>
     </thead>
     <tbody id="product-list">
@@ -79,6 +80,15 @@
         <td class="px-6 py-4"><%= product.stockQuantity %></td>
         <td class="px-6 py-4"><%= product.totalPurchase %></td>
         <td class="px-6 py-4"><%= product.createdAt %></td>
+        <td class="flex px-6 py-4 gap-4">
+          <button
+            class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+            title="View"
+            data-id="<%= product.id %>"
+          >
+            View
+          </button>
+        </td>
       </tr>
       <% }); %>
     </tbody>
@@ -141,6 +151,15 @@
         <td class="px-6 py-4">${ product.stockQuantity }</td>
         <td class="px-6 py-4">${ product.totalPurchase }</td>
         <td class="px-6 py-4">${ product.createdAt }</td>
+        <td class="flex px-6 py-4 gap-4">
+          <button
+            class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+            title="View"
+            data-id="${ product.id }"
+          >
+            View
+          </button>
+        </td>
       </tr>
                 `;
         })
@@ -220,28 +239,8 @@
       const productId = button.getAttribute("data-id");
       const action = button.getAttribute("title");
       console.log(action);
-      if (action === "Ban" || action === "Unban") {
-        try {
-          const response = await fetch("/api/banproduct", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ id: productId }),
-          });
+      if (action === "Ban") {
 
-          const result = await response.json();
-
-          if (response.ok) {
-            alert(result.message);
-            button.innerText = result.product.isBan === 1 ? "Unban" : "Ban";
-            button.title = result.product.isBan === 1 ? "Unban" : "Ban";
-          } else {
-            alert("Failed to update the product");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
       } else if (action === "View") {
         try {
           const response = await fetch(`/api/productDetail?id=${productId}`);
@@ -255,6 +254,15 @@
               <h2 class="text-xl font-bold mb-4">User Details</h2>
               <form>
                 <div class="flex flex-col gap-4">
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Id:</label>
+                    <input
+                      type="text"
+                      value="${result.product.id}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
                   <div class="flex">
                     <label class="w-1/4 font-semibold">Full Name:</label>
                     <input
@@ -274,66 +282,64 @@
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Id:</label>
+                    <label class="w-1/4 font-semibold">Brand:</label>
                     <input
                       type="text"
-                      value="${result.product.id}"
+                      value="${result.product.brand}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Role:</label>
+                    <label class="w-1/4 font-semibold">Price:</label>
                     <input
                       type="text"
-                      value="${
-                        result.product.isAdmin === 1 ? "Admin" : "Customer"
-                      }"
+                      value="${result.product.price}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Ban Status:</label>
+                    <label class="w-1/4 font-semibold">Real Price:</label>
                     <input
                       type="text"
-                      value="${result.product.isBan === 1 ? "Ban" : "Not Ban"}"
+                      value="${result.product.realPrice}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Country:</label>
+                    <label class="w-1/4 font-semibold">Stock Quantity:</label>
                     <input
                       type="text"
-                      value="${result.product.country}"
+                      value="${result.product.stockQuantity}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">City:</label>
+                    <label class="w-1/4 font-semibold">Total Purchase:</label>
                     <input
                       type="text"
-                      value="${result.product.city}"
+                      value="${result.product.totalPurchase}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Phone:</label>
+                    <label class="w-1/4 font-semibold">Short Description:</label>
                     <input
                       type="text"
-                      value="${result.product.phone}"
+                      value="${result.product.shortDescription}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Sex:</label>
+                    <label class="w-1/4 font-semibold">Detail Description:</label>
                     <input
                       type="text"
-                      value="${result.product.sex}"
+                      value="${result.product.detail}"
                       readonly
                       class="border p-2 w-3/4"
                     />
@@ -348,26 +354,33 @@
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Bio:</label>
-                    <textarea
-                      readonly
-                      class="border p-2 w-3/4"
-                    >${result.product.bio}</textarea>
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Verified:</label>
+                    <label class="w-1/4 font-semibold">Material:</label>
                     <input
                       type="text"
-                      value="${result.product.isVerified ? "Yes" : "No"}"
+                      value="${result.product.material}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Avatar:</label>
-                    <img src='${
-                      result.product.avatar
-                    }' alt="avatar" width="320" height="120 object-contain ">
+                    <label class="w-1/4 font-semibold">WeightKg::</label>
+                    <input
+                      type="text"
+                      value="${result.product.weightKg}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Images:</label>
+                    <div class="w-3/4 flex space-x-4">
+                      ${result.product.images
+                        .map(
+                          (img) =>
+                            `<img src="${img.image}" alt="Product Image" class="object-contain" width="120" height="120">`
+                        )
+                        .join("")}
+                    </div>
                   </div>
                 </div>
               </form>

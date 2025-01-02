@@ -46,4 +46,20 @@ async function getProducts(req) {
     };
 }
 
-module.exports = { getProducts };
+async function getProductDetailById(id) {
+    const filePath = path.join(__dirname, '../../data/product-detail.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const productsData = JSON.parse(jsonData);
+
+    const product = productsData.find(product => product.id === id);
+
+    if (!product) {
+        throw new Error(`product with ID ${id} not found.`);
+    }
+    return {
+        message: `Details of product ${id}`,
+        product: product
+    }
+}
+
+module.exports = { getProducts, getProductDetailById };

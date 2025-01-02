@@ -1,5 +1,5 @@
 const { renderProductPage } = require('./product-view');
-const { getProducts } = require('./product-model');
+const { getProducts, getProductDetailById } = require('./product-model');
 
 async function getProductPage(req, res, next) {
   try {
@@ -20,4 +20,19 @@ async function getProductPageAPI(req, res, next) {
   }
 }
 
-module.exports = { getProductPageAPI, getProductPage};
+async function getProductDetail(req, res, next) {
+  try {
+    const productId = req.query.id;
+    if (!productId) {
+      throw new Error("product ID is required.");
+    }
+
+    const data = await getProductDetailById(productId);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+module.exports = { getProductPageAPI, getProductPage, getProductDetail};
