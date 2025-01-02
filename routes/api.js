@@ -13,6 +13,7 @@ router.get('/accountDetail', accountController.getAccountDetail);
 router.get('/products', productController.getProductPageAPI);
 router.get('/productDetail', productController.getProductDetail);
 
+router.post('/updateProfile',profileController.changeProfile);
 
 
 module.exports = router;
