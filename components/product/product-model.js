@@ -4,7 +4,7 @@ const path = require('path');
 const limit = 6;
 
 async function getProducts(req) {
-    const filePath = path.join(__dirname, '../../data/product-list.json');
+    const filePath = path.join(__dirname, '../../data/product-detail.json');
     const jsonData = await fs.readFile(filePath, 'utf8');
     const productsData = JSON.parse(jsonData);
 
@@ -63,6 +63,30 @@ async function getProductDetailById(id) {
     }
 }
 
+async function updateProductById(id, data) {
+    const filePath = path.join(__dirname, '../../data/product-detail.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const productsData = JSON.parse(jsonData);
+  
+    const productIndex = productsData.findIndex(product => product.id === id);
+  
+    if (productIndex === -1) {
+      throw new Error(`Product with ID ${id} not found.`);
+    }
+    const product = productsData[productIndex];
+    for (const key in data) {
+      if (product.hasOwnProperty(key)) {
+        product[key] = data[key];
+      }
+    }
+    await fs.writeFile(filePath, JSON.stringify(productsData, null, 2), 'utf8');
+
+    return {
+      message: `Product with ID ${id} updated successfully.`,
+      product: product
+    };
+  }
+
 async function getBrandCategory() {
     const filePath = path.join(__dirname, '../../data/brand-category.json');
     const jsonData = await fs.readFile(filePath, 'utf8');
@@ -105,4 +129,4 @@ async function addCategory(newCategory) {
     };
 }
 
-module.exports = { getProducts, getProductDetailById, getBrandCategory, addBrand, addCategory };
+module.exports = { getProducts, updateProductById ,getProductDetailById, getBrandCategory, addBrand, addCategory };

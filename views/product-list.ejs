@@ -153,6 +153,13 @@
         <td class="px-6 py-4">${ product.createdAt }</td>
         <td class="flex px-6 py-4 gap-4">
           <button
+            class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+            title="Update"
+            data-id="${ product.id }"
+          >
+            Update
+          </button>
+          <button
             class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
             title="View"
             data-id="${ product.id }"
@@ -238,8 +245,230 @@
       const productId = button.getAttribute("data-id");
       const action = button.getAttribute("title");
       console.log(action);
-      if (action === "Ban") {
+      if (action === "Update") {
+      try {
+        const response = await fetch(`/api/productDetail?id=${productId}`);
+        const result = await response.json();
 
+        const brandCategoryResponse = await fetch("/api/brandCategory");
+        const brandCategoryData = await brandCategoryResponse.json();
+
+        if (response.ok) {
+          const modalContainer = document.createElement("div");
+          modalContainer.innerHTML = `
+            <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+              <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
+                <h2 class="text-xl font-bold mb-4">Update Product</h2>
+                <form id="productForm">
+                  <div class="flex flex-col gap-4">
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Id (read   only):</label>
+                      <input
+                        type="text"
+                        value="${result.product.id}"
+                        readonly
+                        class="border p-2 w-3/4"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Name:</label>
+                      <input
+                        type="text"
+                        value="${result.product.name}"
+                        id="name"
+                        class="border p-2 w-3/4"
+                      />
+                    </div>
+                  <div class="flex">
+                      <label class="w-1/4 font-semibold">Brand:</label>
+                      <select id="brand" class="border p-2 w-3/4">
+                      <option value="" disabled selected>Select a brand</option>
+                        ${brandCategoryData.brandCategory.brands
+                          .map(
+                            (brand) =>
+                              `<option value="${brand.id}" ${result.product.brand === brand.id ? 'selected' : ''}>${brand.id}. ${brand.brand}</option>`
+                          )
+                          .join("")}
+                      </select>
+                    </div>
+
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Category:</label>
+                      <select id="category" class="border p-2 w-3/4">
+                      <option value="" disabled selected>Select a Category</option>
+                        ${brandCategoryData.brandCategory.categories
+                          .map(
+                            (category) =>
+                              `<option value="${category.id}" ${result.product.category === category.id ? 'selected' : ''}>${category.id}. ${category.category}</option>`
+                          )
+                          .join("")}
+                      </select>
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Price:</label>
+                      <input
+                        type="number"
+                        value="${result.product.price}"
+                        id="price"
+                        class="border p-2 w-3/4",
+                        min="0",
+                        step="0.01"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Real Price:</label>
+                      <input
+                        type="number"
+                        value="${result.product.realPrice}"
+                        id="realPrice"
+                        class="border p-2 w-3/4",
+                        min="0",
+                        step="0.01"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Stock Quantity:</label>
+                      <input
+                        type="number"
+                        value="${result.product.stockQuantity}"
+                        id="stockQuantity"
+                        class="border p-2 w-3/4",
+                        min="0",
+                        step="1"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Status:</label>
+                      <select
+                        id="status"
+                        class="border p-2 w-3/4"
+                      >
+                        <option value="On stock" ${result.product.status === 'On stock' ? 'selected' : ''}>On stock</option>
+                        <option value="Out of stock" ${result.product.status === 'Out of stock' ? 'selected' : ''}>Out of stock</option>
+                        <option value="Suspend" ${result.product.status === 'Suspend' ? 'selected' : ''}>Suspend</option>
+                      </select>
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Short Description:</label>
+                      <input
+                        type="text"
+                        value="${result.product.shortDescription}"
+                        id="shortDescription"
+                        class="border p-2 w-3/4"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Detail Description:</label>
+                      <input
+                        type="text"
+                        value="${result.product.detail}"
+                        id="detail"
+                        class="border p-2 w-3/4"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Material:</label>
+                      <input
+                        type="text"
+                        value="${result.product.material}"
+                        id="material"
+                        class="border p-2 w-3/4"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Weight (Kg):</label>
+                      <input
+                        type="number"
+                        value="${result.product.weightKg}"
+                        id="weightKg"
+                        class="border p-2 w-3/4",
+                        min="0",
+                        step="0.01"
+                      />
+                    </div>
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Images:</label>
+                      <div class="w-3/4 flex space-x-4">
+                        ${result.product.images
+                          .map(
+                            (img) =>
+                              `<img src="${img.image}" alt="Product Image" class="object-contain" width="120" height="120">`
+                          )
+                          .join("")}
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" class="mt-4 text-white bg-blue-500 px-4 py-2 rounded-lg">
+                    Update
+                  </button>
+                </form>
+                <button
+                  onclick="closeModal()"
+                  class="mt-4 text-white bg-red-500 px-4 py-2 rounded-lg"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+          `;
+
+          document.body.appendChild(modalContainer);
+          window.closeModal = function () {
+            document.body.removeChild(modalContainer);
+          };
+
+          const form = document.getElementById("productForm");
+          form.addEventListener("submit", async (event) => {
+            event.preventDefault();
+
+            const updatedProduct = {
+              id: productId,
+              data: {
+                name: document.getElementById("name").value,
+                category: document.getElementById("category").value,
+                brand: document.getElementById("brand").value,
+                price: document.getElementById("price").value,
+                realPrice: document.getElementById("realPrice").value,
+                stockQuantity: document.getElementById("stockQuantity").value,
+                status: document.getElementById("status").value,
+                shortDescription: document.getElementById("shortDescription").value,
+                detail: document.getElementById("detail").value,
+                material: document.getElementById("material").value,
+                weightKg: document.getElementById("weightKg").value,
+              },
+            };
+
+            try {
+              const response = await fetch("/api/productUpdate", {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(updatedProduct),
+              });
+
+              const result = await response.json();
+              if (response.ok) {
+                alert("Product updated successfully");
+                const url = new URL(window.location);
+                const page = url.searchParams.get("page") || 1;
+                fetchAndUpdate(page);
+                closeModal();
+              } else {
+                alert("Failed to update the product");
+              }
+            } catch (error) {
+              console.error("Error:", error);
+            }
+          });
+
+        } else {
+          alert("Failed to fetch the product details");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
       } else if (action === "View") {
         try {
           const response = await fetch(`/api/productDetail?id=${productId}`);
@@ -272,19 +501,19 @@
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">category:</label>
+                    <label class="w-1/4 font-semibold">Brand:</label>
                     <input
                       type="text"
-                      value="${result.product.category}"
+                      value="${result.product.brand}"
                       readonly
                       class="border p-2 w-3/4"
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Brand:</label>
+                    <label class="w-1/4 font-semibold">Category:</label>
                     <input
                       type="text"
-                      value="${result.product.brand}"
+                      value="${result.product.category}"
                       readonly
                       class="border p-2 w-3/4"
                     />

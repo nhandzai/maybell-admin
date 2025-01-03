@@ -27,6 +27,18 @@
         />
       </div>
       <div>
+        <label class="block font-semibold">Real price:</label>
+        <input
+          type="number"
+          name="realPrice"
+          placeholder="Enter price"
+          class="border p-2 w-full"
+          required
+          min="0",
+          step="0.01"
+        />
+      </div>
+      <div>
         <label class="block font-semibold">Brand:</label>
         <select name="brand" id="brand" class="border p-2 w-full" required>
           <option value="" disabled selected>Select a brand</option>
@@ -52,7 +64,7 @@
           class="border p-2 w-full"
           required
           min="0",
-          step="0.01"
+          step="1"
         />
       </div>
       <div>

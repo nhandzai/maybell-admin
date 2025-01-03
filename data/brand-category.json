@@ -11,6 +11,10 @@
     {
       "id": "3",
       "brand": "JKL"
+    },
+    {
+      "brand": "Vai",
+      "id": "4"
     }
   ],
   "categories": [
@@ -21,6 +25,10 @@
     {
       "category": "dddd",
       "id": "2"
+    },
+    {
+      "category": "Chan",
+      "id": "3"
     }
   ]
 }

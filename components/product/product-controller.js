@@ -1,5 +1,6 @@
 const { renderProductPage, renderCreateProductPage, renderCreateBrandCategoryPage } = require('./product-view');
-const { getProducts, getProductDetailById, getBrandCategory, addBrand, addCategory } = require('./product-model');
+const { getProducts, updateProductById, getProductDetailById, getBrandCategory, addBrand, addCategory } = require('./product-model');
+const { data } = require('autoprefixer');
 
 async function getProductPage(req, res, next) {
   try {
@@ -36,6 +37,25 @@ async function getProductDetail(req, res, next) {
     }
 
     const data = await getProductDetailById(productId);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+async function updateProduct(req, res, next) {
+  try {
+    const productId = req.body.id;
+    const inputData = req.body.data;
+    if (!productId) {
+      throw new Error("product ID is required.");
+    }
+    if (!inputData) {
+      throw new Error("Input data is required.");
+    }
+
+    const data = await updateProductById(productId,inputData);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -91,4 +111,4 @@ async function addNewCategory(req, res, next) {
   }
 }
 
-module.exports = { addNewBrand, addNewCategory, getProductPageAPI, getProductPage, getProductDetail, getCreateProductPage, getListBrandCategory, getCreateBrandCategoryPage };
+module.exports = { updateProduct, addNewBrand, addNewCategory, getProductPageAPI, getProductPage, getProductDetail, getCreateProductPage, getListBrandCategory, getCreateBrandCategoryPage };

@@ -12,6 +12,7 @@ router.get('/accountDetail', accountController.getAccountDetail);
 
 router.get('/products', productController.getProductPageAPI);
 router.get('/productDetail', productController.getProductDetail);
+router.patch('/productUpdate', productController.updateProduct);
 router.get('/brandCategory', productController.getListBrandCategory);
 router.post('/brand', productController.addNewBrand);
 router.post('/category', productController.addNewCategory);

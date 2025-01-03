@@ -1,231 +1,310 @@
 [
-    {
-      "id": "1",
-      "name": "CHAIR",
-      "price": 55,
-      "brand": "101",
-      "category": "201",
-      "stockQuantity": 10,
-      "totalPurchase": 2,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "status":"on stock",
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "2",
-      "name": "SOFA",
-      "price": 79,
-      "brand": "102",
-      "category": "202",
-      "stockQuantity": 5,
-      "totalPurchase": 19,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "3",
-      "name": "GUYER KITCHEN",
-      "price": 120,
-      "brand": "103",
-      "category": "203",
-      "stockQuantity": 3,
-      "totalPurchase": 12,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "4",
-      "name": "GUYER ROOM",
-      "price": 89,
-      "brand": "104",
-      "category": "204",
-      "stockQuantity": 7,
-      "totalPurchase": 11,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "5",
-      "name": "BEDROOM",
-      "price": 65,
-      "brand": "105",
-      "category": "205",
-      "stockQuantity": 8,
-      "totalPurchase": 13,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "6",
-      "name": "STREET CHAIR",
-      "price": 49,
-      "brand": "106",
-      "category": "206",
-      "stockQuantity": 15,
-      "totalPurchase": 11,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" }
-      ]
-    },
-    {
-      "id": "7",
-      "name": "WHITE SOFA",
-      "price": 75,
-      "brand": "107",
-      "category": "207",
-      "stockQuantity": 4,
-      "totalPurchase": 6,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "8",
-      "name": "COMFY BED",
-      "price": 85,
-      "brand": "108",
-      "category": "208",
-      "stockQuantity": 6,
-      "totalPurchase": 7,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "9",
-      "name": "LUXURY MATRASS",
-      "price": 120,
-      "brand": "109",
-      "category": "209",
-      "stockQuantity": 2,
-      "totalPurchase": 7,
-      "createdAt": "20/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "10",
-      "name": "OUTDOOR BENCH",
-      "price": 65,
-      "brand": "110",
-      "category": "210",
-      "stockQuantity": 9,
-      "totalPurchase": 2,
-      "createdAt": "21/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "11",
-      "name": "LIVING GUYER",
-      "price": 99,
-      "brand": "111",
-      "category": "211",
-      "stockQuantity": 5,
-      "totalPurchase": 10,
-      "createdAt": "19/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    },
-    {
-      "id": "12",
-      "name": "MODERN KITCHEN SET",
-      "price": 150,
-      "brand": "112",
-      "category": "212",
-      "stockQuantity": 3,
-      "totalPurchase": 3,
-      "createdAt": "25/12/2004",
-      "shortDescription":   "A cozy sofa with plush cushions...",
-      "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
-      "material": "Upholstery, Wood, Foam",
-      "weightKg": 75,
-      "realPrice": 145,
-      "images": [
-        { "id": "1", "image": "/images/gura.jpg" },
-        { "id": "2", "image": "/images/fuwa.webp" }
-      ]
-    }
-  ]
-  
+  {
+    "id": "1",
+    "name": "CHAIR asdasdasdad",
+    "price": "55",
+    "brand": "1",
+    "category": "1",
+    "stockQuantity": "10",
+    "totalPurchase": 2,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": "75",
+    "realPrice": "145",
+    "status": "On stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "2",
+    "name": "SOFA",
+    "price": 79,
+    "brand": "102",
+    "category": "202",
+    "stockQuantity": 5,
+    "totalPurchase": 19,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "3",
+    "name": "GUYER KITCHEN",
+    "price": 120,
+    "brand": "103",
+    "category": "203",
+    "stockQuantity": 3,
+    "totalPurchase": 12,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "4",
+    "name": "GUYER ROOM",
+    "price": 89,
+    "brand": "104",
+    "category": "204",
+    "stockQuantity": 7,
+    "totalPurchase": 11,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "5",
+    "name": "BEDROOM SSS ahahahah",
+    "price": "3123123123",
+    "brand": "4",
+    "category": "3",
+    "stockQuantity": "812312312332",
+    "totalPurchase": 13,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": "75",
+    "realPrice": "145123121231231231232131",
+    "status": "On stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "6",
+    "name": "STREET CHAIR",
+    "price": 49,
+    "brand": "106",
+    "category": "206",
+    "stockQuantity": 15,
+    "totalPurchase": 11,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      }
+    ]
+  },
+  {
+    "id": "7",
+    "name": "WHITE SOFA",
+    "price": 75,
+    "brand": "107",
+    "category": "207",
+    "stockQuantity": 4,
+    "totalPurchase": 6,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "8",
+    "name": "COMFY BED ec ec",
+    "price": "85",
+    "brand": "1",
+    "category": "1",
+    "stockQuantity": "6",
+    "totalPurchase": 7,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": "75",
+    "realPrice": "145",
+    "status": "On stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "9",
+    "name": "LUXURY MATRASS",
+    "price": 120,
+    "brand": "109",
+    "category": "209",
+    "stockQuantity": 2,
+    "totalPurchase": 7,
+    "createdAt": "20/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "10",
+    "name": "OUTDOOR BENCH",
+    "price": 65,
+    "brand": "110",
+    "category": "210",
+    "stockQuantity": 9,
+    "totalPurchase": 2,
+    "createdAt": "21/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "11",
+    "name": "LIVING GUYER",
+    "price": 99,
+    "brand": "111",
+    "category": "211",
+    "stockQuantity": 5,
+    "totalPurchase": 10,
+    "createdAt": "19/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  },
+  {
+    "id": "12",
+    "name": "MODERN KITCHEN SET",
+    "price": 150,
+    "brand": "112",
+    "category": "212",
+    "stockQuantity": 3,
+    "totalPurchase": 3,
+    "createdAt": "25/12/2004",
+    "shortDescription": "A cozy sofa with plush cushions...",
+    "detail": "A roomy, Italian-style sofa made to be comfortable and convenient...",
+    "material": "Upholstery, Wood, Foam",
+    "weightKg": 75,
+    "realPrice": 145,
+    "status": "on stock",
+    "images": [
+      {
+        "id": "1",
+        "image": "/images/gura.jpg"
+      },
+      {
+        "id": "2",
+        "image": "/images/fuwa.webp"
+      }
+    ]
+  }
+]
