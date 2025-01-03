@@ -1,0 +1,94 @@
+[
+    {
+        "id": "1",
+        "userId": "36",
+        "paymentMethod": "MoMo",
+        "status": "inProcess",
+        "createdAt": "3/1/2025",
+        "address": "399b CMT8",
+        "country": "Viet Nam",
+        "city": "Hồ Chí Minh",
+        "total": 77,
+        "orderProducts": [
+            {
+                "productId": "4",
+                "name": "do cai id la 4",
+                "quantity": 10
+            },
+            {
+                "productId": "10",
+                "name": "do cai id la 10",
+                "quantity": 7
+            }
+        ]
+    },
+    {
+        "id": "2",
+        "userId": "45",
+        "paymentMethod": "MoMo",
+        "status": "canceled",
+        "createdAt": "3/10/2025",
+        "address": "123 Le Loi",
+        "country": "Viet Nam",
+        "city": "Đà Nẵng",
+        "total": 150,
+        "orderProducts": [
+            {
+                "productId": "2",
+                "name": "do cai id la 2",
+                "quantity": 5
+            }
+        ]
+    },
+    {
+        "id": "3",
+        "userId": "52",
+        "paymentMethod": "MoMo",
+        "status": "inProcess",
+        "createdAt": "3/12/2025",
+        "address": "456 Nguyen Hue",
+        "country": "Viet Nam",
+        "city": "Hà Nội",
+        "total": 230,
+        "orderProducts": [
+            {
+                "productId": "1",
+                "name": "do cai id la 1",
+                "quantity": 3
+            },
+            {
+                "productId": "6",
+                "name": "do cai id la 6",
+                "quantity": 20
+            }
+        ]
+    },
+    {
+        "id": "4",
+        "userId": "58",
+        "paymentMethod": "MoMo",
+        "status": "completed",
+        "createdAt": "3/184/2025",
+        "address": "789 Cach Mang Thang 8",
+        "country": "Viet Nam",
+        "city": "Hồ Chí Minh",
+        "total": 305,
+        "orderProducts": [
+            {
+                "productId": "3",
+                "name": "do cai id la 3",
+                "quantity": 15
+            },
+            {
+                "productId": "9",
+                "name": "do cai id la 9",
+                "quantity": 25
+            },
+            {
+                "productId": "8",
+                "name": "do cai id la 8",
+                "quantity": 12
+            }
+        ]
+    }
+]

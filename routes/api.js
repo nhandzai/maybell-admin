@@ -5,6 +5,7 @@ var router = express.Router();
 const accountController = require('../components/account/account-controller');
 const productController = require('../components/product/product-controller');
 const profileController = require('../components/profile/profile-controller');
+const orderController = require('../components/order/order-controller');
 
 router.get('/accounts', accountController.getAccountPageAPI);
 router.post('/banAccount', accountController.banAccount);
@@ -19,5 +20,6 @@ router.post('/category', productController.addNewCategory);
 
 router.post('/updateProfile',profileController.changeProfile);
 
+router.get('/orders', orderController.getOrderPageAPI);
 
 module.exports = router;

@@ -1,0 +1,405 @@
+<div class="p-4">
+  <form id="filter-form" class="flex gap-4">
+    <select id="filter-status" class="px-4 py-2 border rounded">
+      <option value="">All Statuses</option>
+      <option value="inProcess">In Process</option>
+      <option value="completed">Completed</option>
+      <option value="canceled">Canceled</option>
+    </select>
+    <input
+      type="text"
+      id="filter-userId"
+      placeholder="Filter by userId"
+      class="px-4 py-2 border rounded"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Filter
+    </button>
+  </form>
+
+  <form id="sort-form" class="flex gap-4 mt-4">
+    <select id="sort-field" class="px-4 py-2 border rounded">
+      <option value="userId">userId</option>
+      <option value="createdAt">Created At</option>
+    </select>
+    <select id="sort-order" class="px-4 py-2 border rounded">
+      <option value="asc">Ascending</option>
+      <option value="desc">Descending</option>
+    </select>
+    <button
+      type="submit"
+      class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+    >
+      Sort
+    </button>
+  </form>
+</div>
+
+<div class="relative overflow-x-auto">
+  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">Id</th>
+        <th scope="col" class="px-6 py-3">User Id</th>
+        <th scope="col" class="px-6 py-3">Payment Method</th>
+        <th scope="col" class="px-6 py-3">Total</th>
+        <th scope="col" class="px-6 py-3">Status</th>
+        <th scope="col" class="px-6 py-3">Created At</th>
+        <th scope="col" class="px-6 py-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="order-list">
+      <% orders.forEach(order => { %>
+      <tr class="bg-white border-b">
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          <%= order.id %>
+        </th>
+        <td class="px-6 py-4"><%= order.userId %></td>
+
+        <td class="px-6 py-4"><%= order.paymentMethod %></td>
+        <td class="px-6 py-4"><%= order.total %></td>
+        <td class="px-6 py-4"><%= order.status %></td>
+        <td class="px-6 py-4"><%= order.createdAt %></td>
+        <td class="flex px-6 py-4 gap-4">
+          <button
+            title="<%= order.isBan === 1 ? 'Unban' : 'Ban' %>"
+            class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+            data-id="<%= order.id %>"
+          >
+            <%= order.isBan === 1 ? 'Unban' : 'Ban' %>
+          </button>
+          <button
+            class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+            title="View"
+            data-id="<%= order.id %>"
+          >
+            View
+          </button>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
+  </table>
+</div>
+<div class="pagination mt-4 flex justify-center">
+  <% for (let i = 1; i <= pageNumber; i++) { %>
+  <button
+    class="pagination-button px-4 py-2 text-sm rounded-lg <%= page === i ? 'bg-blue-500 text-white' : 'bg-gray-300 text-gray-700' %>"
+    data-page="<%= i %>"
+  >
+    <%= i %>
+  </button>
+  <% } %>
+</div>
+
+<script>
+  async function fetchAndUpdate(page) {
+    try {
+      const url = new URL(window.location);
+
+      const statusFilter = url.searchParams.get("status") || "";
+      const userIdFilter = url.searchParams.get("userId") || "";
+      const sortField = url.searchParams.get("sortField") || "createdAt";
+      const sortOrder = url.searchParams.get("sortOrder") || "asc";
+
+      url.searchParams.set("page", page);
+      window.history.pushState({}, "", url);
+
+      const response = await fetch(
+        `/api/orders?page=${page}&status=${encodeURIComponent(
+          statusFilter
+        )}&userId=${encodeURIComponent(
+          userIdFilter
+        )}&sortField=${sortField}&sortOrder=${sortOrder}`
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch data");
+
+      const data = await response.json();
+
+      const tbody = document.getElementById("order-list");
+      tbody.innerHTML = data.orders
+        .map((order) => {
+          return `
+                  <tr class="bg-white border-b">
+                    <th
+                      scope="row"
+                      class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                    >
+                      ${order.id}
+                    </th>
+                    <td class="px-6 py-4">${order.userId}</td>
+                    <td class="px-6 py-4">${order.paymentMethod}</td>
+                    <td class="px-6 py-4">${order.total}</td>
+                    <td class="px-6 py-4">${order.status}</td>
+                    <td class="px-6 py-4">${order.createdAt}</td>
+                    <td class="flex px-6 py-4 gap-4">
+                      <button
+                        title="${order.isBan === 1 ? "Unban" : "Ban"}"
+                        class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+                        data-id="${order.id}"
+                      >
+                        ${order.isBan === 1 ? "Unban" : "Ban"}
+                      </button>
+                      <button
+                        class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+                        title="View"
+                        data-id="${order.id}"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                `;
+        })
+        .join("");
+
+      const paginationContainer = document.querySelector(".pagination");
+      paginationContainer.innerHTML = Array.from(
+        { length: data.pageNumber },
+        (_, i) => `
+                <button
+                  class="pagination-button px-4 py-2 text-sm rounded-lg ${
+                    data.page === i + 1
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-300 text-gray-700"
+                  }"
+                  data-page="${i + 1}"
+                >
+                  ${i + 1}
+                </button>
+              `
+      ).join("");
+
+      document.querySelectorAll(".pagination-button").forEach((button) => {
+        button.addEventListener("click", (event) => {
+          const page = button.getAttribute("data-page");
+          fetchAndUpdate(page);
+        });
+      });
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+  //filter-form
+  document
+    .getElementById("filter-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const statusFilter = document.getElementById("filter-status").value;
+      const userIdFilter = document.getElementById("filter-userId").value;
+
+      const url = new URL(window.location);
+      url.searchParams.set("status", statusFilter);
+      url.searchParams.set("userId", userIdFilter);
+      url.searchParams.set("page", 1);
+      window.history.pushState({}, "", url);
+
+      fetchAndUpdate(1);
+    });
+  //sort-form
+  document
+    .getElementById("sort-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      const sortField = document.getElementById("sort-field").value;
+      const sortOrder = document.getElementById("sort-order").value;
+
+      const url = new URL(window.location);
+      url.searchParams.set("sortField", sortField);
+      url.searchParams.set("sortOrder", sortOrder);
+      url.searchParams.set("page", 1);
+      window.history.pushState({}, "", url);
+
+      fetchAndUpdate(1);
+    });
+
+  const orderList = document.getElementById("order-list");
+
+  orderList.addEventListener("click", async (event) => {
+    const button = event.target.closest("button[data-id]");
+    console.log("Button clicked");
+    if (button) {
+      const orderId = button.getAttribute("data-id");
+      const action = button.getAttribute("title");
+      console.log(action);
+      if (action === "Ban" || action === "Unban") {
+        try {
+          const response = await fetch("/api/banorder", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id: orderId }),
+          });
+
+          const result = await response.json();
+
+          if (response.ok) {
+            alert(result.message);
+            button.innerText = result.order.isBan === 1 ? "Unban" : "Ban";
+            button.title = result.order.isBan === 1 ? "Unban" : "Ban";
+          } else {
+            alert("Failed to update the order");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      } else if (action === "View") {
+        try {
+          const response = await fetch(`/api/orderDetail?id=${orderId}`);
+          const result = await response.json();
+
+          if (response.ok) {
+            const modalContainer = document.createElement("div");
+            modalContainer.innerHTML = `
+          <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
+              <h2 class="text-xl font-bold mb-4">User Details</h2>
+              <form>
+                <div class="flex flex-col gap-4">
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Full Name:</label>
+                    <input
+                      type="text"
+                      value="${result.order.id}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">userId:</label>
+                    <input
+                      type="text"
+                      value="${result.order.userId}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Role:</label>
+                    <input
+                      type="text"
+                      value="${
+                        result.order.isAdmin === 1 ? "Admin" : "Customer"
+                      }"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Ban Status:</label>
+                    <input
+                      type="text"
+                      value="${result.order.isBan === 1 ? "Ban" : "Not Ban"}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Country:</label>
+                    <input
+                      type="text"
+                      value="${result.order.country}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">City:</label>
+                    <input
+                      type="text"
+                      value="${result.order.city}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Phone:</label>
+                    <input
+                      type="text"
+                      value="${result.order.phone}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Sex:</label>
+                    <input
+                      type="text"
+                      value="${result.order.sex}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Create Time:</label>
+                    <input
+                      type="text"
+                      value="${result.order.createdAt}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Bio:</label>
+                    <textarea
+                      readonly
+                      class="border p-2 w-3/4"
+                    >${result.order.bio}</textarea>
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Verified:</label>
+                    <input
+                      type="text"
+                      value="${result.order.isVerified ? "Yes" : "No"}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Avatar:</label>
+                    <img src='${
+                      result.order.avatar
+                    }' alt="avatar" width="320" height="120 object-contain ">
+                  </div>
+                </div>
+              </form>
+              <button
+                onclick="closeModal()"
+                class="mt-4 text-white bg-red-500 px-4 py-2 rounded-lg"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        `;
+
+            document.body.appendChild(modalContainer);
+            window.closeModal = function () {
+              document.body.removeChild(modalContainer);
+            };
+          } else {
+            alert("Failed to fetch the order details");
+          }
+        } catch (error) {
+          console.error("Error:", error);
+        }
+      }
+    }
+  });
+
+  window.addEventListener("load", () => {
+    const url = new URL(window.location);
+    const page = url.searchParams.get("page") || 1;
+    fetchAndUpdate(page);
+  });
+</script>
