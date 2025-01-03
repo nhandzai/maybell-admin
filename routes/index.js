@@ -10,7 +10,8 @@ router.get('/', profileController.getProfilePage)
 router.get('/accounts', accountController.getAccountPage);
 
 router.get('/products', productController.getProductPage);
-router.get('/create',productController.getCreateProductPage);
+router.get('/create', productController.getCreateProductPage);
+router.get('/createBrandCategory', productController.getCreateBrandCategoryPage);
 
 router.get('/profile', profileController.getProfilePage);
 

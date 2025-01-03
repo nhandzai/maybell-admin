@@ -1,4 +1,5 @@
 const fs = require('fs').promises;
+const { data } = require('autoprefixer');
 const path = require('path');
 const limit = 6;
 
@@ -62,4 +63,46 @@ async function getProductDetailById(id) {
     }
 }
 
-module.exports = { getProducts, getProductDetailById };
+async function getBrandCategory() {
+    const filePath = path.join(__dirname, '../../data/brand-category.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const brandCategoryData = JSON.parse(jsonData);
+
+    return {
+        brandCategory: brandCategoryData
+    }
+}
+
+async function addBrand(newBrand) {
+    const filePath = path.join(__dirname, '../../data/brand-category.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const brandCategoryData = JSON.parse(jsonData);
+
+    const newId = (parseInt(brandCategoryData.brands[brandCategoryData.brands.length - 1]?.id) || 0) + 1;
+    newBrand.id = newId.toString();
+    brandCategoryData.brands.push(newBrand);
+    await fs.writeFile(filePath, JSON.stringify(brandCategoryData, null, 2));
+
+    return {
+        message: 'Brand added successfully',
+        brand: newBrand
+    };
+}
+
+async function addCategory(newCategory) {
+    const filePath = path.join(__dirname, '../../data/brand-category.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const brandCategoryData = JSON.parse(jsonData);
+
+    const newId = (parseInt(brandCategoryData.categories[brandCategoryData.categories.length - 1]?.id) || 0) + 1;
+    newCategory.id = newId.toString();
+
+    brandCategoryData.categories.push(newCategory);
+    await fs.writeFile(filePath, JSON.stringify(brandCategoryData, null, 2));
+    return {
+        message: 'Category added successfully',
+        category: newCategory
+    };
+}
+
+module.exports = { getProducts, getProductDetailById, getBrandCategory, addBrand, addCategory };

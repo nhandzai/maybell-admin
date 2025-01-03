@@ -1,0 +1,26 @@
+{
+  "brands": [
+    {
+      "id": "1",
+      "brand": "ABC"
+    },
+    {
+      "id": "2",
+      "brand": "XYZ"
+    },
+    {
+      "id": "3",
+      "brand": "JKL"
+    }
+  ],
+  "categories": [
+    {
+      "id": "1",
+      "category": "AAA"
+    },
+    {
+      "category": "dddd",
+      "id": "2"
+    }
+  ]
+}

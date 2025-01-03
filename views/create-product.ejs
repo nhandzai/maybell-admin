@@ -17,39 +17,42 @@
       <div>
         <label class="block font-semibold">Price:</label>
         <input
-          type="text"
+          type="number"
           name="price"
           placeholder="Enter price"
           class="border p-2 w-full"
           required
+          min="0",
+          step="0.01"
         />
       </div>
       <div>
         <label class="block font-semibold">Brand:</label>
-        <select name="brand" class="border p-2 w-full" required>
+        <select name="brand" id="brand" class="border p-2 w-full" required>
           <option value="" disabled selected>Select a brand</option>
-          <option value="1">1. ABV</option>
-          <option value="2">2. XYZ</option>
-          <option value="3">3. JKL</option>
         </select>
       </div>
       <div>
         <label class="block font-semibold">Category:</label>
-        <select name="category" class="border p-2 w-full" required>
+        <select
+          name="category"
+          id="category"
+          class="border p-2 w-full"
+          required
+        >
           <option value="" disabled selected>Select a category</option>
-          <option value="1">1. AAA</option>
-          <option value="2">2. BBB</option>
-          <option value="3">3. CCC</option>
         </select>
-      </div>      
+      </div>
       <div>
         <label class="block font-semibold">Stock Quantity:</label>
         <input
-          type="text"
+          type="number"
           name="stockQuantity"
           placeholder="Enter stock quantity"
           class="border p-2 w-full"
           required
+          min="0",
+          step="0.01"
         />
       </div>
       <div>
@@ -83,11 +86,13 @@
       <div>
         <label class="block font-semibold">Weight (kg):</label>
         <input
-          type="text"
+          type="number"
           name="weightKg"
           placeholder="Enter weight in kg"
           class="border p-2 w-full"
           required
+          min="0",
+          step="0.01"
         />
       </div>
       <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
@@ -96,7 +101,36 @@
     </form>
   </div>
 </div>
+
 <script>
+  // Fetch brand and category data
+  async function fetchBrandCategoryData() {
+    try {
+      const response = await fetch("/api/brandCategory");
+      const data = await response.json();
+
+      // Populate the brand options
+      const brandSelect = document.getElementById("brand");
+      data.brandCategory.brands.forEach((brand) => {
+        const option = document.createElement("option");
+        option.value = brand.id;
+        option.textContent = `${brand.id}. ${brand.brand}`;
+        brandSelect.appendChild(option);
+      });
+
+      // Populate the category options
+      const categorySelect = document.getElementById("category");
+      data.brandCategory.categories.forEach((category) => {
+        const option = document.createElement("option");
+        option.value = category.id;
+        option.textContent = `${category.id}. ${category.category}`;
+        categorySelect.appendChild(option);
+      });
+    } catch (error) {
+      console.error("Error fetching brand/category data:", error);
+    }
+  }
+
   function handleFormSubmit(event) {
     event.preventDefault();
 
@@ -108,6 +142,8 @@
     });
 
     console.log("Product Data:", productData);
-    alert('Add product success')
+    alert("Add product success");
   }
+
+  window.onload = fetchBrandCategoryData;
 </script>

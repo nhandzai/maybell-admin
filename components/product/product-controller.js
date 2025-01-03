@@ -1,5 +1,5 @@
-const { renderProductPage,renderCreateProductPage } = require('./product-view');
-const { getProducts, getProductDetailById } = require('./product-model');
+const { renderProductPage, renderCreateProductPage, renderCreateBrandCategoryPage } = require('./product-view');
+const { getProducts, getProductDetailById, getBrandCategory, addBrand, addCategory } = require('./product-model');
 
 async function getProductPage(req, res, next) {
   try {
@@ -43,4 +43,52 @@ async function getProductDetail(req, res, next) {
   }
 }
 
-module.exports = { getProductPageAPI, getProductPage, getProductDetail, getCreateProductPage};
+async function getListBrandCategory(req, res, next) {
+  try {
+    const data = await getBrandCategory();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+async function getCreateBrandCategoryPage(req, res, next) {
+  try {
+    await renderCreateBrandCategoryPage(res);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function addNewBrand(req, res, next) {
+  try {
+    const newBrand = req.body;
+    if (!newBrand) {
+      throw new Error("New Brand is required.");
+    }
+
+    data = await addBrand(newBrand);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+async function addNewCategory(req, res, next) {
+  try {
+    const newCategory = req.body;
+    if (!newCategory) {
+      throw new Error("New Category is required.");
+    }
+
+    data = await addCategory(newCategory);
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+    next(error);
+  }
+}
+
+module.exports = { addNewBrand, addNewCategory, getProductPageAPI, getProductPage, getProductDetail, getCreateProductPage, getListBrandCategory, getCreateBrandCategoryPage };

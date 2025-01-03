@@ -12,4 +12,10 @@ async function renderCreateProductPage(res) {
     });
 }
 
-module.exports = { renderProductPage, renderCreateProductPage };
+async function renderCreateBrandCategoryPage(res) {
+    res.render('create-brand-category.ejs', {
+
+    });
+}
+
+module.exports = { renderProductPage, renderCreateProductPage, renderCreateBrandCategoryPage };

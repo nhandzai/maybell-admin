@@ -1,0 +1,165 @@
+<div class="container mx-auto mt-10">
+    <!-- Form for Adding Brand -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-4">Add New Brand</h2>
+      <form id="brandForm">
+        <div>
+          <label class="block font-semibold">Brand Name:</label>
+          <input
+            type="text"
+            name="brand"
+            class="border p-2 w-full"
+            placeholder="Enter brand name"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
+        >
+          Add Brand
+        </button>
+      </form>
+    </div>
+  
+    <!-- Form for Adding Category -->
+    <div class="mb-6">
+      <h2 class="text-xl font-semibold mb-4">Add New Category</h2>
+      <form id="categoryForm">
+        <div>
+          <label class="block font-semibold">Category Name:</label>
+          <input
+            type="text"
+            name="category"
+            class="border p-2 w-full"
+            placeholder="Enter category name"
+            required
+          />
+        </div>
+        <button
+          type="submit"
+          class="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
+        >
+          Add Category
+        </button>
+      </form>
+    </div>
+  
+    <!-- Display Brand and Category List -->
+    <div id="brandCategoryList" class="mt-6">
+      <h3 class="text-lg font-semibold mb-4">Brand and Category List</h3>
+      <ul id="brandCategoryUl" class="list-disc pl-5">
+        
+      </ul>
+    </div>
+  
+    <div id="message" class="mt-4"></div>
+  </div>
+  
+  <script>
+    // Fetch and render the brand and category data on page load
+    async function loadBrandCategoryData() {
+      try {
+        const response = await fetch("/api/brandCategory");
+        const data = await response.json();
+        const brandCategoryUl = document.getElementById("brandCategoryUl");
+  
+        // Clear previous list
+        brandCategoryUl.innerHTML = '';
+  
+        // Loop through the brands and add them to the list
+        data.brandCategory.brands.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `Brand: ${item.brand} (ID: ${item.id})`;
+          brandCategoryUl.appendChild(li);
+        });
+  
+        // Loop through the categories and add them to the list
+        data.brandCategory.categories.forEach(item => {
+          const li = document.createElement("li");
+          li.textContent = `Category: ${item.category} (ID: ${item.id})`;
+          brandCategoryUl.appendChild(li);
+        });
+      } catch (error) {
+        console.error("Error loading data:", error);
+      }
+    }
+  
+    // Handle form submission for Brand
+    document
+      .getElementById("brandForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+  
+        const brandData = {
+          brand: document.querySelector("input[name='brand']").value,
+        };
+  
+        fetch("/api/brand", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(brandData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messageDiv = document.getElementById("message");
+            messageDiv.textContent = data.message;
+            messageDiv.classList.add("text-green-500");
+            messageDiv.classList.remove("text-red-500");
+  
+            document.getElementById("brandForm").reset();
+  
+            // Reload the brand and category list after adding brand
+            loadBrandCategoryData();
+          })
+          .catch((error) => {
+            const messageDiv = document.getElementById("message");
+            messageDiv.textContent = "Error adding brand";
+            messageDiv.classList.add("text-red-500");
+            messageDiv.classList.remove("text-green-500");
+          });
+      });
+  
+    // Handle form submission for Category
+    document
+      .getElementById("categoryForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+  
+        const categoryData = {
+          category: document.querySelector("input[name='category']").value,
+        };
+  
+        fetch("/api/category", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(categoryData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            const messageDiv = document.getElementById("message");
+            messageDiv.textContent = data.message;
+            messageDiv.classList.add("text-green-500");
+            messageDiv.classList.remove("text-red-500");
+  
+            document.getElementById("categoryForm").reset();
+  
+            // Reload the brand and category list after adding category
+            loadBrandCategoryData();
+          })
+          .catch((error) => {
+            const messageDiv = document.getElementById("message");
+            messageDiv.textContent = "Error adding category";
+            messageDiv.classList.add("text-red-500");
+            messageDiv.classList.remove("text-green-500");
+          });
+      });
+  
+    // Initial call to load data on page load
+    loadBrandCategoryData();
+  </script>
+  
