@@ -1,7 +1,7 @@
 [
   {
     "id": "1",
-    "fullName": "tronlau xanh le",
+    "fullName": "Nguyễn Lê Đức Nhân",
     "email": "123@gmail.com",
     "password": "password123",
     "isAdmin": 1,
@@ -10,8 +10,8 @@
     "createdAt": "12/12/2024",
     "updatedAt": "12/15/2024",
     "phone": "1234565123123",
-    "sex": "Female",
-    "bio": "HAHAHAHAHAHAH",
+    "sex": "Male",
+    "bio": "Nguoi dep trai nhat Viet Nam\n",
     "googleId": null,
     "isVerified": true,
     "avatar": "/images/gura.jpg",
