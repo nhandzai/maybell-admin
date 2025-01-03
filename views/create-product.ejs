@@ -1,5 +1,5 @@
 <div class="container">
-  <div class="bg-white p-6">
+  <div class="bg-white">
     <h1 class="text-2xl font-bold mb-4">
       Create Product (t ko biet add product can nhung cai j)
     </h1>
@@ -82,6 +82,18 @@
           class="border p-2 w-full"
           required
         />
+      </div>
+      <div>
+        <label class="block font-semibold">Product Status:</label>
+        <select
+          name="status"
+          class="border p-2 w-full"
+          required
+        >
+          <option value="on_stock">On Stock</option>
+          <option value="out_of_stock">Out of Stock</option>
+          <option value="suspend">Suspend</option>
+        </select>
       </div>
       <div>
         <label class="block font-semibold">Weight (kg):</label>
