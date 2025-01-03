@@ -68,11 +68,12 @@
         <td class="px-6 py-4"><%= order.createdAt %></td>
         <td class="flex px-6 py-4 gap-4">
           <button
-            title="<%= order.isBan === 1 ? 'Unban' : 'Ban' %>"
-            class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+            title="Change Status"
+            class="px-4 py-2 text-white rounded <%= order.status === 'inProcess' ? 'bg-yellow-500 hover:bg-yellow-600' : order.status === 'completed' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600' %>"
             data-id="<%= order.id %>"
+            data-status="<%= order.status %>"
           >
-            <%= order.isBan === 1 ? 'Unban' : 'Ban' %>
+            <%= order.status %>
           </button>
           <button
             class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
@@ -141,11 +142,18 @@
                     <td class="px-6 py-4">${order.createdAt}</td>
                     <td class="flex px-6 py-4 gap-4">
                       <button
-                        title="${order.isBan === 1 ? "Unban" : "Ban"}"
-                        class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+                        title="Change Status"
+                        class="px-4 py-2 text-white rounded ${
+                          order.status === 'inProcess'
+                            ? 'bg-yellow-500 hover:bg-yellow-600'
+                            : order.status === 'completed'
+                            ? 'bg-green-500 hover:bg-green-600'
+                            : 'bg-red-500 hover:bg-red-600'
+                        }"
                         data-id="${order.id}"
+                        data-status="${order.status}"
                       >
-                        ${order.isBan === 1 ? "Unban" : "Ban"}
+                        ${order.status}
                       </button>
                       <button
                         class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
@@ -222,6 +230,12 @@
       fetchAndUpdate(1);
     });
 
+  function getNextStatus(currentStatus) {
+    if (currentStatus === "inProcess") return "completed";
+    if (currentStatus === "completed") return "canceled";
+    return "inProcess";
+  }
+
   const orderList = document.getElementById("order-list");
 
   orderList.addEventListener("click", async (event) => {
@@ -230,25 +244,31 @@
     if (button) {
       const orderId = button.getAttribute("data-id");
       const action = button.getAttribute("title");
-      console.log(action);
-      if (action === "Ban" || action === "Unban") {
+      const currentStatus = button.getAttribute("data-status");
+      const nextStatus = getNextStatus(currentStatus);
+      
+
+      if (action === "Change Status") {
         try {
-          const response = await fetch("/api/banorder", {
+          const response = await fetch("/api/changeOrderStatus", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({ id: orderId }),
+            body: JSON.stringify({ id: orderId, status: nextStatus }),
           });
 
           const result = await response.json();
 
           if (response.ok) {
             alert(result.message);
-            button.innerText = result.order.isBan === 1 ? "Unban" : "Ban";
-            button.title = result.order.isBan === 1 ? "Unban" : "Ban";
+            button.innerText = nextStatus;
+            button.setAttribute("data-status", nextStatus);
+            const url = new URL(window.location);
+            const page = url.searchParams.get("page") || 1;
+            fetchAndUpdate(page);
           } else {
-            alert("Failed to update the order");
+            alert("Failed to update the order status");
           }
         } catch (error) {
           console.error("Error:", error);
@@ -261,7 +281,6 @@
           if (response.ok) {
             const modalContainer = document.createElement("div");
 
-            // Generate order products list dynamically
             const orderProductsHTML = result.order.orderProducts
               .map(
                 (product) => `

@@ -22,5 +22,5 @@ router.post('/updateProfile',profileController.changeProfile);
 
 router.get('/orders', orderController.getOrderPageAPI);
 router.get('/orderDetail', orderController.getOrderDetail);
-
+router.post('/changeOrderStatus', orderController.changeOrderStatus);
 module.exports = router;

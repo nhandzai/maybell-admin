@@ -60,4 +60,25 @@ async function getOrderDetailById(id) {
     }
 }
 
-module.exports = { getOrders, getOrderDetailById };
+async function changeOrderStatusById(id, newStatus) {
+    const filePath = path.join(__dirname, '../../data/order-list.json');
+    try {
+        const jsonData = await fs.readFile(filePath, 'utf8');
+        const ordersData = JSON.parse(jsonData);
+        const order = ordersData.find(order => order.id === id);
+
+        if (!order) {
+            throw new Error(`Order with ID ${id} not found.`);
+        }
+
+        order.status = newStatus;
+        await fs.writeFile(filePath, JSON.stringify(ordersData, null, 2), 'utf8');
+
+        return { message: 'Order status updated successfully.', order };
+    } catch (error) {
+        console.error('Error updating order status:', error);
+        throw new Error('Failed to update order status.');
+    }
+}
+
+module.exports = { getOrders, getOrderDetailById, changeOrderStatusById };
