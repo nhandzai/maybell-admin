@@ -75,8 +75,8 @@
         </th>
         <td class="px-6 py-4"><%= product.name %></td>
         <td class="px-6 py-4"><%= product.price %></td>
-        <td class="px-6 py-4"><%= product.brand %></td>
-        <td class="px-6 py-4"><%= product.category %></td>
+        <td class="px-6 py-4"><%= product.brandName %></td>
+        <td class="px-6 py-4"><%= product.categoryName %></td>
         <td class="px-6 py-4"><%= product.stockQuantity %></td>
         <td class="px-6 py-4"><%= product.totalPurchase %></td>
         <td class="px-6 py-4"><%= product.createdAt %></td>
@@ -146,8 +146,8 @@
         </th>
         <td class="px-6 py-4">${ product.name }</td>
         <td class="px-6 py-4">${ product.price }</td>
-        <td class="px-6 py-4">${ product.brand }</td>
-        <td class="px-6 py-4">${ product.category }</td>
+        <td class="px-6 py-4">${ product.brandName }</td>
+        <td class="px-6 py-4">${ product.categoryName }</td>
         <td class="px-6 py-4">${ product.stockQuantity }</td>
         <td class="px-6 py-4">${ product.totalPurchase }</td>
         <td class="px-6 py-4">${ product.createdAt }</td>
@@ -501,7 +501,7 @@
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Brand:</label>
+                    <label class="w-1/4 font-semibold">Brand Id:</label>
                     <input
                       type="text"
                       value="${result.product.brand}"
@@ -510,10 +510,28 @@
                     />
                   </div>
                   <div class="flex">
-                    <label class="w-1/4 font-semibold">Category:</label>
+                    <label class="w-1/4 font-semibold">Category Id:</label>
                     <input
                       type="text"
                       value="${result.product.category}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Brand:</label>
+                    <input
+                      type="text"
+                      value="${result.product.brandName}"
+                      readonly
+                      class="border p-2 w-3/4"
+                    />
+                  </div>
+                  <div class="flex">
+                    <label class="w-1/4 font-semibold">Category:</label>
+                    <input
+                      type="text"
+                      value="${result.product.categoryName}"
                       readonly
                       class="border p-2 w-3/4"
                     />
