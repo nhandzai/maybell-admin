@@ -8,7 +8,10 @@ const profileController = require('../components/profile/profile-controller');
 
 router.get('/', profileController.getProfilePage)
 router.get('/accounts', accountController.getAccountPage);
+
 router.get('/products', productController.getProductPage);
+router.get('/create',productController.getCreateProductPage);
+
 router.get('/profile', profileController.getProfilePage);
 
 module.exports = router;

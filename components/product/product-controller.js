@@ -1,10 +1,18 @@
-const { renderProductPage } = require('./product-view');
+const { renderProductPage,renderCreateProductPage } = require('./product-view');
 const { getProducts, getProductDetailById } = require('./product-model');
 
 async function getProductPage(req, res, next) {
   try {
     const products = await getProducts(req);
     await renderProductPage(res, products);
+  } catch (error) {
+    next(error);
+  }
+}
+
+async function getCreateProductPage(req, res, next) {
+  try {
+    await renderCreateProductPage(res);
   } catch (error) {
     next(error);
   }
@@ -35,4 +43,4 @@ async function getProductDetail(req, res, next) {
   }
 }
 
-module.exports = { getProductPageAPI, getProductPage, getProductDetail};
+module.exports = { getProductPageAPI, getProductPage, getProductDetail, getCreateProductPage};

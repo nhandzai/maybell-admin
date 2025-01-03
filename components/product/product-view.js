@@ -6,4 +6,10 @@ async function renderProductPage(res, products) {
     });
 }
 
-module.exports = { renderProductPage };
+async function renderCreateProductPage(res) {
+    res.render('create-product.ejs', {
+
+    });
+}
+
+module.exports = { renderProductPage, renderCreateProductPage };

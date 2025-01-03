@@ -1,0 +1,113 @@
+<div class="container">
+  <div class="bg-white p-6">
+    <h1 class="text-2xl font-bold mb-4">
+      Create Product (t ko biet add product can nhung cai j)
+    </h1>
+    <form onsubmit="handleFormSubmit(event)" class="flex flex-col gap-4">
+      <div>
+        <label class="block font-semibold">Product Name:</label>
+        <input
+          type="text"
+          name="name"
+          placeholder="Enter product name"
+          class="border p-2 w-full"
+          required
+        />
+      </div>
+      <div>
+        <label class="block font-semibold">Price:</label>
+        <input
+          type="text"
+          name="price"
+          placeholder="Enter price"
+          class="border p-2 w-full"
+          required
+        />
+      </div>
+      <div>
+        <label class="block font-semibold">Brand:</label>
+        <select name="brand" class="border p-2 w-full" required>
+          <option value="" disabled selected>Select a brand</option>
+          <option value="1">1. ABV</option>
+          <option value="2">2. XYZ</option>
+          <option value="3">3. JKL</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-semibold">Category:</label>
+        <select name="category" class="border p-2 w-full" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="1">1. AAA</option>
+          <option value="2">2. BBB</option>
+          <option value="3">3. CCC</option>
+        </select>
+      </div>      
+      <div>
+        <label class="block font-semibold">Stock Quantity:</label>
+        <input
+          type="text"
+          name="stockQuantity"
+          placeholder="Enter stock quantity"
+          class="border p-2 w-full"
+          required
+        />
+      </div>
+      <div>
+        <label class="block font-semibold">Short Description:</label>
+        <textarea
+          name="shortDescription"
+          placeholder="Enter short description"
+          class="border p-2 w-full"
+          required
+        ></textarea>
+      </div>
+      <div>
+        <label class="block font-semibold">Detail Description:</label>
+        <textarea
+          name="detail"
+          placeholder="Enter detailed description"
+          class="border p-2 w-full"
+          required
+        ></textarea>
+      </div>
+      <div>
+        <label class="block font-semibold">Material:</label>
+        <input
+          type="text"
+          name="material"
+          placeholder="Enter material"
+          class="border p-2 w-full"
+          required
+        />
+      </div>
+      <div>
+        <label class="block font-semibold">Weight (kg):</label>
+        <input
+          type="text"
+          name="weightKg"
+          placeholder="Enter weight in kg"
+          class="border p-2 w-full"
+          required
+        />
+      </div>
+      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg">
+        Create Product
+      </button>
+    </form>
+  </div>
+</div>
+<script>
+  function handleFormSubmit(event) {
+    event.preventDefault();
+
+    const formData = new FormData(event.target);
+    const productData = {};
+
+    formData.forEach((value, key) => {
+      productData[key] = value;
+    });
+
+    console.log("Product Data:", productData);
+    alert('Add product success')
+  }
+</script>
