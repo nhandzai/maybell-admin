@@ -260,128 +260,140 @@
 
           if (response.ok) {
             const modalContainer = document.createElement("div");
+
+            // Generate order products list dynamically
+            const orderProductsHTML = result.order.orderProducts
+              .map(
+                (product) => `
+            <tr>
+              <td class="border px-4 py-2">${product.productId}</td>
+              <td class="border px-4 py-2">${product.name}</td>
+              <td class="border px-4 py-2">${product.quantity}</td>
+            </tr>
+          `
+              )
+              .join("");
+
             modalContainer.innerHTML = `
-          <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
-              <h2 class="text-xl font-bold mb-4">User Details</h2>
-              <form>
-                <div class="flex flex-col gap-4">
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Full Name:</label>
-                    <input
-                      type="text"
-                      value="${result.order.id}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">userId:</label>
-                    <input
-                      type="text"
-                      value="${result.order.userId}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Role:</label>
-                    <input
-                      type="text"
-                      value="${
-                        result.order.isAdmin === 1 ? "Admin" : "Customer"
-                      }"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Ban Status:</label>
-                    <input
-                      type="text"
-                      value="${result.order.isBan === 1 ? "Ban" : "Not Ban"}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Country:</label>
-                    <input
-                      type="text"
-                      value="${result.order.country}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">City:</label>
-                    <input
-                      type="text"
-                      value="${result.order.city}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Phone:</label>
-                    <input
-                      type="text"
-                      value="${result.order.phone}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Sex:</label>
-                    <input
-                      type="text"
-                      value="${result.order.sex}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Create Time:</label>
-                    <input
-                      type="text"
-                      value="${result.order.createdAt}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Bio:</label>
-                    <textarea
-                      readonly
-                      class="border p-2 w-3/4"
-                    >${result.order.bio}</textarea>
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Verified:</label>
-                    <input
-                      type="text"
-                      value="${result.order.isVerified ? "Yes" : "No"}"
-                      readonly
-                      class="border p-2 w-3/4"
-                    />
-                  </div>
-                  <div class="flex">
-                    <label class="w-1/4 font-semibold">Avatar:</label>
-                    <img src='${
-                      result.order.avatar
-                    }' alt="avatar" width="320" height="120 object-contain ">
+                <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                  <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
+                    <h2 class="text-xl font-bold mb-4">Order Details</h2>
+                    <form>
+                      <div class="flex flex-col gap-4">
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Order ID:</label>
+                          <input
+                            type="text"
+                            value="${result.order.id}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Customer userId:</label>
+                          <input
+                            type="text"
+                            value="${result.order.userId}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Customer name:</label>
+                          <input
+                            type="text"
+                            value="${result.order.userFullname}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Payment method:</label>
+                          <input
+                            type="text"
+                            value="${result.order.paymentMethod}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Status:</label>
+                          <input
+                            type="text"
+                            value="${result.order.status}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Address:</label>
+                          <input
+                            type="text"
+                            value="${result.order.address}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Country:</label>
+                          <input
+                            type="text"
+                            value="${result.order.country}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">City:</label>
+                          <input
+                            type="text"
+                            value="${result.order.city}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Total:</label>
+                          <input
+                            type="text"
+                            value="${result.order.total}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                        <div class="flex">
+                          <label class="w-1/4 font-semibold">Create Time:</label>
+                          <input
+                            type="text"
+                            value="${result.order.createdAt}"
+                            readonly
+                            class="border p-2 w-3/4"
+                          />
+                        </div>
+                      </div>
+                    </form>
+                    <h3 class="text-lg font-semibold mt-6 mb-2">Order Products</h3>
+                    <table class="w-full border-collapse border border-gray-200">
+                      <thead>
+                        <tr>
+                          <th class="border px-4 py-2">Product ID</th>
+                          <th class="border px-4 py-2">Product Name</th>
+                          <th class="border px-4 py-2">Quantity</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        ${orderProductsHTML}
+                      </tbody>
+                    </table>
+                    <button
+                      onclick="closeModal()"
+                      class="mt-4 text-white bg-red-500 px-4 py-2 rounded-lg"
+                    >
+                      Close
+                    </button>
                   </div>
                 </div>
-              </form>
-              <button
-                onclick="closeModal()"
-                class="mt-4 text-white bg-red-500 px-4 py-2 rounded-lg"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        `;
+              `;
 
             document.body.appendChild(modalContainer);
             window.closeModal = function () {

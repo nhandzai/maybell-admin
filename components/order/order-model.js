@@ -44,4 +44,20 @@ async function getOrders(req) {
     };
 }
 
-module.exports = { getOrders };
+async function getOrderDetailById(id) {
+    const filePath = path.join(__dirname, '../../data/order-list.json');
+    const jsonData = await fs.readFile(filePath, 'utf8');
+    const ordersData = JSON.parse(jsonData);
+
+    const order = ordersData.find(order => order.id === id);
+
+    if (!order) {
+        throw new Error(`order with ID ${id} not found.`);
+    }
+    return {
+        message: `Details of order ${id}`,
+        order: order
+    }
+}
+
+module.exports = { getOrders, getOrderDetailById };

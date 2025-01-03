@@ -21,5 +21,6 @@ router.post('/category', productController.addNewCategory);
 router.post('/updateProfile',profileController.changeProfile);
 
 router.get('/orders', orderController.getOrderPageAPI);
+router.get('/orderDetail', orderController.getOrderDetail);
 
 module.exports = router;

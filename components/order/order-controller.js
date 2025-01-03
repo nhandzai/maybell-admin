@@ -1,5 +1,5 @@
 const { renderOrderPage } = require('./order-view');
-const { getOrders } = require('./order-model')
+const { getOrders, getOrderDetailById } = require('./order-model')
 
 async function getOrderPage(req, res, next) {
     try {
@@ -20,4 +20,19 @@ async function getOrderPageAPI(req, res, next) {
     }
 }
 
-module.exports = { getOrderPage, getOrderPageAPI };
+async function getOrderDetail(req, res, next) {
+    try {
+        const orderId = req.query.id;
+        if (!orderId) {
+            throw new Error("order ID is required.");
+        }
+
+        const data = await getOrderDetailById(orderId);
+        res.json(data);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+        next(error);
+    }
+}
+
+module.exports = { getOrderPage, getOrderPageAPI, getOrderDetail };
