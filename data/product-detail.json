@@ -13,6 +13,7 @@
       "material": "Upholstery, Wood, Foam",
       "weightKg": 75,
       "realPrice": 145,
+      "status":"on stock",
       "images": [
         { "id": "1", "image": "/images/gura.jpg" },
         { "id": "2", "image": "/images/fuwa.webp" }
