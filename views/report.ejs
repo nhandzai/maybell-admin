@@ -1,0 +1,163 @@
+<div class="flex flex-col gap-4">
+    <label for="date-picker" class="text-lg font-semibold">Select a Date:</label>
+    <input
+      id="date-picker"
+      type="date"
+      class="border rounded p-2"
+      value="2025-01-01"
+    />
+  </div>
+  <div id="charts-container" class="flex flex-col gap-16 mt-4"></div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const chartsContainer = document.getElementById("charts-container");
+  
+  
+  
+      async function fetchChartData(date) {
+        // Simulated API response
+        // input là date (ngày tháng năm)
+        // gọi api sales tất cả sản phẩm chổ này, sau đó gán giá trị từ response vào labels và data
+        const simulatedResponse = [
+          {
+            id: 1,
+            type: "pie",
+            labels: ["Product A", "Product B", "Product C", "Product D"],
+            data: [20, 30, 15, 25],
+            label: "Quantity Sold",
+            title: `Daily Sales Report (${date})`,
+          },
+          {
+            id: 2,
+            type: "pie",
+            labels: ["Product A", "Product B", "Product C", "Product D"],
+            data: [300, 210, 105, 175],
+            label: "Quantity Sold",
+            title: `Weekly Sales Report (${date} - Weekly Range)`,
+          },
+          {
+            id: 3,
+            type: "pie",
+            labels: ["Product A", "Product B", "Product C", "Product D"],
+            data: [730, 1095, 525, 875],
+            label: "Quantity Sold",
+            title: `Yearly Sales Report (${date.split('-')[0]} - Full Year)`,
+          },
+        ];
+  
+        return simulatedResponse;
+      }
+  
+      async function fetchTopProductsData(date) {
+        // Simulated top products data
+        // input là date (ngày tháng năm)
+        // gọi api sales top các sản phẩm chổ này, sau đó gán giá trị từ response vào labels và data
+        // ( làm api kq nhớ sort giúp từ trên xuống luôn)
+        const topProductsResponse = [
+          {
+            id: 4,
+            type: "bar",
+            labels: ["Product B", "Product A", "Product D"],
+            data: [30, 20, 15],
+            label: "Quantity Sold",
+            title: `Top 3 Products (Daily) - ${date}`,
+          },
+          {
+            id: 5,
+            type: "bar",
+            labels: ["Product B", "Product A", "Product D"],
+            data: [210, 180, 160],
+            label: "Quantity Sold",
+            title: `Top 3 Products (Weekly) - ${date}`,
+          },
+          {
+            id: 6,
+            type: "bar",
+            labels: ["Product B", "Product A", "Product D"],
+            data: [1095, 875, 730],
+            label: "Quantity Sold",
+            title: `Top 3 Products (Yearly) - ${date.split('-')[0]}`,
+          },
+        ];
+  
+        return topProductsResponse;
+      }
+  
+      async function renderCharts(date) {
+        const salesData = await fetchChartData(date);
+        const topProductsData = await fetchTopProductsData(date);
+        const allChartsData = [...salesData, ...topProductsData];
+  
+        chartsContainer.innerHTML = "";
+  
+        allChartsData.forEach((chartData) => {
+          const chartWrapper = document.createElement("div");
+          chartWrapper.className = "flex flex-col items-center";
+  
+          const chartTitle = document.createElement("div");
+          chartTitle.className = "text-lg font-semibold mb-4";
+          chartTitle.textContent = chartData.title;
+  
+          const canvas = document.createElement("canvas");
+          canvas.id = `chart-${chartData.id}`;
+          canvas.className = "w-full max-w-lg";
+  
+          chartWrapper.appendChild(chartTitle);
+          chartWrapper.appendChild(canvas);
+  
+          chartsContainer.appendChild(chartWrapper);
+  
+          const ctx = canvas.getContext("2d");
+          new Chart(ctx, {
+            type: chartData.type,
+            data: {
+              labels: chartData.labels,
+              datasets: [
+                {
+                  label: chartData.label,
+                  data: chartData.data,
+                  backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(255, 206, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                  ],
+                  borderColor: [
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                  ],
+                  borderWidth: 1,
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  display: true,
+                },
+                title: {
+                  display: true,
+                  text: chartData.title,
+                },
+              },
+            },
+          });
+        });
+      }
+  
+      const datePicker = document.getElementById("date-picker");
+      datePicker.addEventListener("change", function () {
+        const selectedDate = new Date(datePicker.value).toLocaleDateString("en-GB");
+        console.log(`Selected date: ${selectedDate}`);
+        renderCharts(selectedDate);
+      });
+  
+      const defaultDate = new Date(document.getElementById("date-picker").value).toLocaleDateString("en-GB");
+      renderCharts(defaultDate);
+    });
+  </script>
+  
