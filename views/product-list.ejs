@@ -252,8 +252,7 @@
 
         const brandCategoryResponse = await fetch("/api/brandCategory");
         const brandCategoryData = await brandCategoryResponse.json();
-        console.log("test", brandCategoryData.brandCategory.brands);
-        console.log("testR",result);
+        
        
 
         if (response.ok) {
@@ -392,17 +391,40 @@
                         step="0.01"
                       />
                     </div>
-                    <div class="flex">
+                   <div class="flex">
                       <label class="w-1/4 font-semibold">Images:</label>
-                      <div class="w-3/4 flex space-x-4">
+                      <div class="w-3/4 flex flex-wrap space-x-4">
                         ${result.product.productImages
                           .map(
-                            (img) =>
-                              `<img src="${img.image}" alt="Product Image" class="object-contain" width="120" height="120">`
+                            (img, index) =>
+                              `<div class="relative flex items-center">
+                                <img src="${img.image}" alt="Product Image" class="object-contain" width="120" height="120">
+                                <input 
+                                  type="checkbox" 
+                                  id="deleteImage${index}"
+                                  value="${img.id}" 
+                                  class="ml-2"
+                                />
+                              </div>`
                           )
                           .join("")}
                       </div>
                     </div>
+
+                    <div class="flex">
+                      <label class="w-1/4 font-semibold">Update Image:</label>
+                      <div class="w-3/4 flex flex-col space-y-2">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          class="border p-2"
+                          id="image"
+                          multiple
+                        />
+                        
+                      </div>
+                    </div>
+
                   </div>
                   <button type="submit" class="mt-4 text-white bg-blue-500 px-4 py-2 rounded-lg">
                     Update
@@ -428,31 +450,41 @@
           form.addEventListener("submit", async (event) => {
             event.preventDefault();
 
-            const updatedProduct = {
-              id: productId,
-              data: {
-                name: document.getElementById("name").value,
-                categoryId: document.getElementById("category").value,
-                brandId: document.getElementById("brand").value,
-                price: document.getElementById("price").value,
-                realPrice: document.getElementById("realPrice").value,
-                stockQuantity: document.getElementById("stockQuantity").value,
-                status: document.getElementById("status").value,
-                shortDescription: document.getElementById("shortDescription").value,
-                detail: document.getElementById("detail").value,
-                material: document.getElementById("material").value,
-                weightKg: document.getElementById("weightKg").value,
-              },
-            };
+            const formData = new FormData();
 
+            // Thêm các dữ liệu văn bản vào formData
+            formData.append("id", productId);
+            formData.append("name", document.getElementById("name").value);
+            formData.append("categoryId", document.getElementById("category").value);
+            formData.append("brandId", document.getElementById("brand").value);
+            formData.append("price", document.getElementById("price").value);
+            formData.append("realPrice", document.getElementById("realPrice").value);
+            formData.append("stockQuantity", document.getElementById("stockQuantity").value);
+            formData.append("status", document.getElementById("status").value);
+            formData.append("shortDescription", document.getElementById("shortDescription").value);
+            formData.append("detail", document.getElementById("detail").value);
+            formData.append("material", document.getElementById("material").value);
+            formData.append("weightKg", document.getElementById("weightKg").value);
+            
+           
+            const images = document.getElementById("image").files;
+            for (let i = 0; i < images.length; i++) {
+              formData.append("updateImages", images[i]);
+            }
+          
+          
+            const deleteImages = Array.from(
+              document.querySelectorAll('input[type="checkbox"]:checked')
+            ).map((checkbox) => checkbox.value);
+            formData.append("deleteImages", JSON.stringify(deleteImages));
+          
             try {
+             
               const response = await fetch("/api/productUpdate", {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify(updatedProduct),
+                method: "POST",
+                body: formData,
               });
+          
 
               const result = await response.json();
               if (response.ok) {

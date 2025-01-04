@@ -89,9 +89,7 @@ async function getProductDetailById(id) {
                     },
                 },
                 productImages: {
-                    where: {
-                        isMain: true,
-                    },
+
                 },
             },
         });
@@ -126,8 +124,10 @@ async function getProductDetailById(id) {
 }
 
 
-async function updateProductById(id, data) {
+async function updateProductById(id, data, productImages) {
     try {
+        console.log('data', data);
+
         const product = await prisma.products.findUnique({
             where: {
                 id: parseInt(id, 10),
@@ -139,18 +139,76 @@ async function updateProductById(id, data) {
         }
 
 
+        if (data.deleteImages && data.deleteImages.length > 0) {
+            let deleteImagesArray = [];
+            try {
+
+                deleteImagesArray = JSON.parse(data.deleteImages);
+            } catch (error) {
+                console.error('Invalid JSON format for deleteImages:', error);
+                throw new Error('Invalid deleteImages format.');
+            }
+
+
+            if (Array.isArray(deleteImagesArray) && deleteImagesArray.length > 0) {
+                await prisma.productImages.deleteMany({
+                    where: {
+                        id: {
+                            in: deleteImagesArray.map((imgId) => parseInt(imgId, 10)),
+                        },
+                        productId: parseInt(id, 10),
+                    },
+                });
+            }
+        }
+
+
+        const imageUrls = [];
+        if (productImages && productImages.length > 0) {
+            for (const image of productImages) {
+                const result = await uploadFile(image.path, 'products');
+                imageUrls.push(result.secure_url);
+                await fs.unlink(image.path);
+            }
+
+
+            for (let i = 0; i < imageUrls.length; i++) {
+                await prisma.productImages.create({
+                    data: {
+                        productId: product.id,
+                        image: imageUrls[i],
+                        isMain: i === 0,
+                    },
+                });
+            }
+        }
+
+
         const updatedProduct = await prisma.products.update({
             where: {
                 id: parseInt(id, 10),
             },
-            data : {
-                ...data,
-                categoryId: parseInt(data.categoryId, 10), 
-                brandId: parseInt(data.brandId, 10), 
-                price: parseFloat(data.price), 
-                realPrice: parseFloat(data.realPrice), 
-                weightKg: parseFloat(data.weightKg), 
-                stockQuantity: parseInt(data.stockQuantity, 10), 
+            data: {
+                name: data.name,
+                categories: {
+                    connect: {
+                        id: parseInt(data.categoryId, 10)
+                    }
+                },
+                brands: {
+                    connect: {
+                        id: parseInt(data.brandId, 10)
+                    }
+                },
+                price: parseFloat(data.price), // Chuyển price thành số thực nếu cần
+                realPrice: parseFloat(data.realPrice),
+                stockQuantity: parseInt(data.stockQuantity, 10),
+                status: data.status,
+                shortDescription: data.shortDescription,
+                detail: data.detail,
+                material: data.material,
+                weightKg: parseFloat(data.weightKg),
+              
             },
         });
 
@@ -222,48 +280,48 @@ async function addCategory(category) {
 }
 async function addProduct({ name, price, realPrice, stockQuantity, shortDescription, detail, material, status, weightKg, productImages }) {
     try {
-  
-      const imageUrls = [];
-  
-  
-      for (const image of productImages) {
-        const result = await uploadFile(image.path, 'products');
-        imageUrls.push(result.secure_url);
-        await fs.unlink(image.path); 
-      }
-  
-    
-      const newProduct = await prisma.products.create({
-        data: {
-          name,
-          price: parseFloat(price),
-          realPrice: parseFloat(realPrice),
-          stockQuantity: parseInt(stockQuantity, 10),
-          shortDescription,
-          detail,
-          material,
-          status,
-          weightKg: parseFloat(weightKg),
-        },
-      });
-  
-  
-      for (let i = 0; i < imageUrls.length; i++) {
-        await prisma.productImages.create({
-          data: {
-            productId: newProduct.id,
-            image: imageUrls[i],
-            isMain: i === 0, 
-          },
+
+        const imageUrls = [];
+
+
+        for (const image of productImages) {
+            const result = await uploadFile(image.path, 'products');
+            imageUrls.push(result.secure_url);
+            await fs.unlink(image.path);
+        }
+
+
+        const newProduct = await prisma.products.create({
+            data: {
+                name,
+                price: parseFloat(price),
+                realPrice: parseFloat(realPrice),
+                stockQuantity: parseInt(stockQuantity, 10),
+                shortDescription,
+                detail,
+                material,
+                status,
+                weightKg: parseFloat(weightKg),
+            },
         });
-      }
-  
-      return newProduct;
+
+
+        for (let i = 0; i < imageUrls.length; i++) {
+            await prisma.productImages.create({
+                data: {
+                    productId: newProduct.id,
+                    image: imageUrls[i],
+                    isMain: i === 0,
+                },
+            });
+        }
+
+        return newProduct;
     } catch (error) {
-      console.error('Error creating product in service:', error);
-      throw new Error('An error occurred while adding product.');
+        console.error('Error creating product in service:', error);
+        throw new Error('An error occurred while adding product.');
     }
-  }
+}
 
 
 module.exports = { getProducts, updateProductById, getProductDetailById, getBrandCategory, addBrand, addCategory, addProduct };

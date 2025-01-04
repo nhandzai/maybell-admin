@@ -45,9 +45,12 @@ async function getProductDetail(req, res, next) {
 }
 
 async function updateProduct(req, res, next) {
+  console.log("1",req.body)
   try {
     const productId = req.body.id;
-    const inputData = req.body.data;
+    const inputData = req.body;
+    const productImages = req.files || [];
+    console.log(req.body)
     if (!productId) {
       throw new Error("product ID is required.");
     }
@@ -55,7 +58,7 @@ async function updateProduct(req, res, next) {
       throw new Error("Input data is required.");
     }
 
-    const data = await updateProductById(productId,inputData);
+    const data = await updateProductById(productId,inputData,productImages);
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -124,7 +127,6 @@ async function addNewProduct(req, res) {
     weightKg
   } = req.body;
   console.log(req.body)
-
   const productImages = req.files || [];
 
   try {
