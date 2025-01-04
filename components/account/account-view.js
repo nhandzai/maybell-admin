@@ -5,5 +5,8 @@ async function renderAccountPage(res, accounts) {
         pageNumber: accounts.pageNumber
     });
 }
+async function renderLogInPage(res) {
+    res.render('log-in.ejs');
+}
 
-module.exports = { renderAccountPage };
+module.exports = { renderAccountPage, renderLogInPage };

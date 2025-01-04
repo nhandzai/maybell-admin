@@ -1,118 +1,136 @@
 <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">User Information</h1>
-  
-    <div class="flex gap-6">
-      <div>
-        <img id="userAvatar" src="<%= user.avatar %>" alt="User Avatar" class="w-32 h-32 rounded-full border">
-      </div>
-      <div>
-        <p><strong>ID:</strong> <%= user.id %></p>
-        <p><strong>Full Name:</strong> <span id="userFullName"><%= user.fullName %></span></p>
-        <p><strong>Email:</strong> <%= user.email %></p>
-        <p><strong>Country:</strong> <span id="userCountry"><%= user.country %></span></p>
-        <p><strong>City:</strong> <span id="userCity"><%= user.city %></span></p>
-        <p><strong>Phone:</strong> <span id="userPhone"><%= user.phone %></span></p>
-        <p><strong>Sex:</strong> <span id="userSex"><%= user.sex %></span></p>
-        <p><strong>Bio:</strong> <span id="userBio"><%= user.bio %></span></p>
-        <p><strong>Created At:</strong> <%= user.createdAt %></p>
-      </div>
-    </div>
-    <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="showFormModal()">
-      Edit Information
-    </button>
-  </div>
-  
-  <div id="editFormModal" style="display: none;" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-    <div class="bg-white p-6 rounded shadow-lg w-96">
-      <h2 class="text-xl font-bold mb-4">Edit Information</h2>
-      <form id="editProfileForm">
-        <input type="hidden" name="id" value="<%= user.id %>">
-        
-        <div class="mb-4">
-          <label for="fullName" class="block font-medium mb-1">Full Name</label>
-          <input type="text" id="fullName" name="fullName" value="<%= user.fullName %>" class="w-full border px-3 py-2">
-        </div>
-  
-        <div class="mb-4">
-          <label for="country" class="block font-medium mb-1">Country</label>
-          <input type="text" id="country" name="country" value="<%= user.country %>" class="w-full border px-3 py-2">
-        </div>
-  
-        <div class="mb-4">
-          <label for="city" class="block font-medium mb-1">City</label>
-          <input type="text" id="city" name="city" value="<%= user.city %>" class="w-full border px-3 py-2">
-        </div>
-  
-        <div class="mb-4">
-          <label for="phone" class="block font-medium mb-1">Phone</label>
-          <input type="text" id="phone" name="phone" value="<%= user.phone %>" class="w-full border px-3 py-2">
-        </div>
-  
-        <div class="mb-4">
-          <label for="sex" class="block font-medium mb-1">Sex</label>
-          <select id="sex" name="sex" class="w-full border px-3 py-2">
-            <option value="Male" <%= user.sex === 'Male' ? 'selected' : '' %>>Male</option>
-            <option value="Female" <%= user.sex === 'Female' ? 'selected' : '' %>>Female</option>
-          </select>
-        </div>
-  
-        <div class="mb-4">
-          <label for="bio" class="block font-medium mb-1">Bio</label>
-          <textarea id="bio" name="bio" class="w-full border px-3 py-2"><%= user.bio %></textarea>
-        </div>
-  
-        <div class="flex justify-between">
-          <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" onclick="hideFormModal()">Cancel</button>
-          <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Changes</button>
-        </div>
-      </form>
-    </div>
-  </div>
-  
-  <script defer>
-    function showFormModal() {
-      document.getElementById('editFormModal').style.display = 'flex';
-    }
-  
-    function hideFormModal() {
-      document.getElementById('editFormModal').style.display = 'none';
-    }
-  
-    document.getElementById('editProfileForm').addEventListener('submit', function(event) {
-    event.preventDefault();
-    
-    const formInputs = document.querySelectorAll('#editFormModal input, #editFormModal select, #editFormModal textarea');
-    let formData = {};
-    formInputs.forEach(input => {
-      formData[input.name] = input.value;
-    });
+  <h1 class="text-2xl font-bold mb-4">User Information</h1>
 
+  <div class="flex gap-6">
+    <div>
+      <img id="userAvatar" src="<%= user.avatar %>" alt="User Avatar" class="w-32 h-32 rounded-full border">
+    </div>
+    <div>
+      <p><strong>ID:</strong>
+        <%= user.id %>
+      </p>
+      <p><strong>Full Name:</strong> <span id="userFullName">
+          <%= user.fullName %>
+        </span></p>
+      <p><strong>Email:</strong>
+        <%= user.email %>
+      </p>
+      <p><strong>Country:</strong> <span id="userCountry">
+          <%= user.country %>
+        </span></p>
+      <p><strong>City:</strong> <span id="userCity">
+          <%= user.city %>
+        </span></p>
+      <p><strong>Phone:</strong> <span id="userPhone">
+          <%= user.phone %>
+        </span></p>
+      <p><strong>Sex:</strong> <span id="userSex">
+          <%= user.sex %>
+        </span></p>
+      <p><strong>Bio:</strong> <span id="userBio">
+          <%= user.bio %>
+        </span></p>
+      <p><strong>Created At:</strong>
+        <%= user.createdAt %>
+      </p>
+    </div>
+  </div>
+  <button class="mt-4 bg-blue-500 text-white px-4 py-2 rounded" onclick="showFormModal()">
+    Edit Information
+  </button>
+</div>
+
+<div id="editFormModal" style="display: none;"
+  class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+  <div class="bg-white p-6 rounded shadow-lg w-96">
+    <h2 class="text-xl font-bold mb-4">Edit Information</h2>
+    <form id="editProfileForm">
+      <input type="hidden" name="id" value="<%= user.id %>">
+
+      <div class="mb-4">
+        <label for="fullName" class="block font-medium mb-1">Full Name</label>
+        <input type="text" id="fullName" name="fullName" value="<%= user.fullName %>" class="w-full border px-3 py-2">
+      </div>
+
+      <div class="mb-4">
+        <label for="country" class="block font-medium mb-1">Country</label>
+        <input type="text" id="country" name="country" value="<%= user.country %>" class="w-full border px-3 py-2">
+      </div>
+
+      <div class="mb-4">
+        <label for="city" class="block font-medium mb-1">City</label>
+        <input type="text" id="city" name="city" value="<%= user.city %>" class="w-full border px-3 py-2">
+      </div>
+
+      <div class="mb-4">
+        <label for="phone" class="block font-medium mb-1">Phone</label>
+        <input type="text" id="phone" name="phone" value="<%= user.phone %>" class="w-full border px-3 py-2">
+      </div>
+
+      <div class="mb-4">
+        <label for="sex" class="block font-medium mb-1">Sex</label>
+        <select id="sex" name="sex" class="w-full border px-3 py-2">
+          <option value="Male" <%=user.sex==='Male' ? 'selected' : '' %>>Male</option>
+          <option value="Female" <%=user.sex==='Female' ? 'selected' : '' %>>Female</option>
+        </select>
+      </div>
+
+      <div class="mb-4">
+        <label for="bio" class="block font-medium mb-1">Bio</label>
+        <textarea id="bio" name="bio" class="w-full border px-3 py-2"><%= user.bio %></textarea>
+      </div>
+      <div class="mb-4">
+        <label for="avatar" class="block font-medium mb-1">Avatar</label>
+        <input type="file" id="avatar" name="avatar" accept="image/*" class="w-full border px-3 py-2">
+      </div>
+
+      <div class="flex justify-between">
+        <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded" onclick="hideFormModal()">Cancel</button>
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script defer>
+  function showFormModal() {
+    document.getElementById('editFormModal').style.display = 'flex';
+  }
+
+  function hideFormModal() {
+    document.getElementById('editFormModal').style.display = 'none';
+  }
+
+  document.getElementById('editProfileForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+  
+    const form = document.getElementById('editProfileForm');
+    const formData = new FormData(form); 
+  
     fetch('/api/updateProfile', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
+      body: formData, 
     })
-    .then(response => response.json()) 
-    .then(data => {
-      if (data.message) {
-        const updatedUser = data.account;
-
-        document.querySelector('#userFullName').innerText = updatedUser.fullName;
-        document.querySelector('#userCountry').innerText = updatedUser.country;
-        document.querySelector('#userCity').innerText = updatedUser.city;
-        document.querySelector('#userPhone').innerText = updatedUser.phone;
-        document.querySelector('#userSex').innerText = updatedUser.sex;
-        document.querySelector('#userBio').innerText = updatedUser.bio;
-        document.querySelector('#userAvatar').src = updatedUser.avatar;
-
-        hideFormModal();
-      } else {
-        console.error('Error updating profile:', data);
-      }
-    })
-    .catch(error => console.error('Error:', error));
-  });
-  </script>
+      .then(response => response.json())
+      .then(data => {
+        if (data.message) {
+          const updatedUser = data.account;
   
+        
+          document.querySelector('#userFullName').innerText = updatedUser.fullName;
+          document.querySelector('#userCountry').innerText = updatedUser.country;
+          document.querySelector('#userCity').innerText = updatedUser.city;
+          document.querySelector('#userPhone').innerText = updatedUser.phone;
+          document.querySelector('#userSex').innerText = updatedUser.sex;
+          document.querySelector('#userBio').innerText = updatedUser.bio;
+          document.querySelector('#userAvatar').src = updatedUser.avatar;
+  
+          hideFormModal();
+        } else {
+          console.error('Error updating profile:', data);
+        }
+      })
+      .catch(error => console.error('Error:', error));
+  });
+  
+</script>

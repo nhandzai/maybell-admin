@@ -1,132 +1,269 @@
 const fs = require('fs').promises;
-const { data } = require('autoprefixer');
-const path = require('path');
 const limit = 6;
+const { prisma } = require('../../config/config');
+const { uploadFile, deleteFile } = require('../cloudinary/cloudinary.js');
 
 async function getProducts(req) {
-    const filePath = path.join(__dirname, '../../data/product-detail.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const productsData = JSON.parse(jsonData);
+    try {
+        const page = parseInt(req.query.page) || 1;
 
-    const page = parseInt(req.query.page) || 1;
-    const categoryFilter = req.query.category || '';
-    const nameFilter = req.query.name || '';
-    const brandFilter = req.query.brand || '';
-    const sortField = req.query.sortField || '';
-    const sortOrder = req.query.sortOrder || '';
+        const categoryFilter = req.query.category || '';
+        const nameFilter = req.query.name || '';
+        const brandFilter = req.query.brand || '';
+        const sortField = req.query.sortField || 'createdAt';
+        const sortOrder = req.query.sortOrder === 'desc' ? 'desc' : 'asc';
 
-    const filteredProducts = productsData.filter(product => {
-        const matchesBrand = brandFilter ? product.brand.toLowerCase().includes(brandFilter.toLowerCase()) : true;
-        const matchesCategory = categoryFilter ? product.category.toLowerCase().includes(categoryFilter.toLowerCase()) : true;
-        const matchesName = nameFilter ? product.name.toLowerCase().includes(nameFilter.toLowerCase()) : true;
-        return matchesCategory && matchesName && matchesBrand;
-    });
+        const whereClause = {
+            AND: [
+                categoryFilter ? { category: { contains: categoryFilter, mode: 'insensitive' } } : {},
+                nameFilter ? { name: { contains: nameFilter, mode: 'insensitive' } } : {},
+                brandFilter ? { brand: { contains: brandFilter, mode: 'insensitive' } } : {},
+            ],
+        };
 
-    if (sortField) {
-        filteredProducts.sort((a, b) => {
-            const fieldA = a[sortField];
-            const fieldB = b[sortField];
+        const orderByClause = sortField ? { [sortField]: sortOrder } : undefined;
 
-            if (sortOrder === 'asc') {
-                return fieldA > fieldB ? 1 : fieldA < fieldB ? -1 : 0;
-            } else if (sortOrder === 'desc') {
-                return fieldA < fieldB ? 1 : fieldA > fieldB ? -1 : 0;
-            }
-            return 0;
+
+        const products = await prisma.products.findMany({
+            where: whereClause,
+            include: {
+                brands: true,
+                categories: true,
+            },
+
+            orderBy: orderByClause,
+            skip: (page - 1) * limit,
+            take: limit,
         });
+
+
+        const totalProducts = await prisma.products.count({ where: whereClause });
+        const totalPages = Math.ceil(totalProducts / limit);
+
+
+        const salesData = await prisma.orderProducts.groupBy({
+            by: ['productId'],
+            _sum: {
+                quantity: true,
+            },
+            where: {
+                productId: {
+                    in: products.map(product => product.id),
+                },
+            },
+        });
+        const productsWithSales = products.map(product => {
+            const sales = salesData.find(data => data.productId === product.id);
+            return {
+                ...product,
+                totalPurchase: sales ? sales._sum.quantity : 0,
+            };
+        });
+
+        return {
+            products: productsWithSales,
+            page,
+            pageNumber: totalPages,
+        };
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        throw new Error('Unable to fetch products. Please try again later.');
     }
-
-    const offset = (page - 1) * limit;
-    const products = filteredProducts.slice(offset, offset + limit);
-    const pageNumber = Math.ceil(filteredProducts.length / limit);
-
-    return {
-        products: products,
-        page: page,
-        pageNumber: pageNumber,
-    };
 }
+
+
 
 async function getProductDetailById(id) {
-    const filePath = path.join(__dirname, '../../data/product-detail.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const productsData = JSON.parse(jsonData);
+    const numericId = parseInt(id, 10);
+    try {
+        const product = await prisma.products.findUnique({
+            where: {
+                id: numericId,
+            },
+            include: {
+                brands: true,
+                categories: true,
+                productSizes: {
+                    include: {
+                        sizes: true,
+                    },
+                },
+                productImages: {
+                    where: {
+                        isMain: true,
+                    },
+                },
+            },
+        });
+        if (!product) {
+            throw new Error(`Product with ID ${id} not found.`);
+        }
+        const salesData = await prisma.orderProducts.groupBy({
+            by: ['productId'],
+            _sum: {
+                quantity: true,
+            },
+            where: {
+                productId: numericId,
+            },
+        });
 
-    const product = productsData.find(product => product.id === id);
 
-    if (!product) {
-        throw new Error(`product with ID ${id} not found.`);
-    }
-    return {
-        message: `Details of product ${id}`,
-        product: product
+        const totalPurchase = salesData.length > 0 ? salesData[0]._sum.quantity : 0;
+
+        return {
+            message: `Details of product ${id}`,
+            product: {
+                ...product,
+                totalPurchase: totalPurchase,
+            },
+        };
+
+    } catch (error) {
+        console.error('Error fetching product details:', error);
+        throw new Error('Unable to fetch product details. Please try again later.');
     }
 }
+
 
 async function updateProductById(id, data) {
-    const filePath = path.join(__dirname, '../../data/product-detail.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const productsData = JSON.parse(jsonData);
-  
-    const productIndex = productsData.findIndex(product => product.id === id);
-  
-    if (productIndex === -1) {
-      throw new Error(`Product with ID ${id} not found.`);
-    }
-    const product = productsData[productIndex];
-    for (const key in data) {
-      if (product.hasOwnProperty(key)) {
-        product[key] = data[key];
-      }
-    }
-    await fs.writeFile(filePath, JSON.stringify(productsData, null, 2), 'utf8');
+    try {
+        const product = await prisma.products.findUnique({
+            where: {
+                id: parseInt(id, 10),
+            },
+        });
 
-    return {
-      message: `Product with ID ${id} updated successfully.`,
-      product: product
-    };
-  }
+        if (!product) {
+            throw new Error(`Product with ID ${id} not found.`);
+        }
+
+
+        const updatedProduct = await prisma.products.update({
+            where: {
+                id: parseInt(id, 10),
+            },
+            data : {
+                ...data,
+                categoryId: parseInt(data.categoryId, 10), 
+                brandId: parseInt(data.brandId, 10), 
+                price: parseFloat(data.price), 
+                realPrice: parseFloat(data.realPrice), 
+                weightKg: parseFloat(data.weightKg), 
+                stockQuantity: parseInt(data.stockQuantity, 10), 
+            },
+        });
+
+        return {
+            message: `Product with ID ${id} updated successfully.`,
+            product: updatedProduct,
+        };
+    } catch (error) {
+        console.error('Error updating product:', error);
+        throw new Error('Unable to update product. Please try again later.');
+    }
+}
+
 
 async function getBrandCategory() {
-    const filePath = path.join(__dirname, '../../data/brand-category.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const brandCategoryData = JSON.parse(jsonData);
+    try {
+        const brands = await prisma.brands.findMany();
+        const categories = await prisma.categories.findMany();
 
-    return {
-        brandCategory: brandCategoryData
+        return {
+            brandCategory: {
+                brands,
+                categories,
+            },
+        };
+    } catch (error) {
+        console.error('Error fetching brand and category data:', error);
+        throw new Error('Unable to fetch brand and category data. Please try again later.');
     }
 }
 
-async function addBrand(newBrand) {
-    const filePath = path.join(__dirname, '../../data/brand-category.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const brandCategoryData = JSON.parse(jsonData);
 
-    const newId = (parseInt(brandCategoryData.brands[brandCategoryData.brands.length - 1]?.id) || 0) + 1;
-    newBrand.id = newId.toString();
-    brandCategoryData.brands.push(newBrand);
-    await fs.writeFile(filePath, JSON.stringify(brandCategoryData, null, 2));
 
-    return {
-        message: 'Brand added successfully',
-        brand: newBrand
-    };
+async function addBrand(brand) {
+    try {
+        const createdBrand = await prisma.brands.create({
+            data: {
+                brand: brand,
+            },
+        });
+
+        return {
+            message: 'Brand added successfully',
+            brand: createdBrand,
+        };
+    } catch (error) {
+        console.error('Error adding brand:', error);
+        throw new Error('Unable to add brand. Please try again later.');
+    }
 }
 
-async function addCategory(newCategory) {
-    const filePath = path.join(__dirname, '../../data/brand-category.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const brandCategoryData = JSON.parse(jsonData);
 
-    const newId = (parseInt(brandCategoryData.categories[brandCategoryData.categories.length - 1]?.id) || 0) + 1;
-    newCategory.id = newId.toString();
+async function addCategory(category) {
+    try {
+        const createdCategory = await prisma.categories.create({
+            data: {
+                category: category,
+            },
+        });
 
-    brandCategoryData.categories.push(newCategory);
-    await fs.writeFile(filePath, JSON.stringify(brandCategoryData, null, 2));
-    return {
-        message: 'Category added successfully',
-        category: newCategory
-    };
+        return {
+            message: 'Category added successfully',
+            category: createdCategory,
+        };
+    } catch (error) {
+        console.error('Error adding category:', error);
+        throw new Error('Unable to add category. Please try again later.');
+    }
 }
+async function addProduct({ name, price, realPrice, stockQuantity, shortDescription, detail, material, status, weightKg, productImages }) {
+    try {
+  
+      const imageUrls = [];
+  
+  
+      for (const image of productImages) {
+        const result = await uploadFile(image.path, 'products');
+        imageUrls.push(result.secure_url);
+        await fs.unlink(image.path); 
+      }
+  
+    
+      const newProduct = await prisma.products.create({
+        data: {
+          name,
+          price: parseFloat(price),
+          realPrice: parseFloat(realPrice),
+          stockQuantity: parseInt(stockQuantity, 10),
+          shortDescription,
+          detail,
+          material,
+          status,
+          weightKg: parseFloat(weightKg),
+        },
+      });
+  
+  
+      for (let i = 0; i < imageUrls.length; i++) {
+        await prisma.productImages.create({
+          data: {
+            productId: newProduct.id,
+            image: imageUrls[i],
+            isMain: i === 0, 
+          },
+        });
+      }
+  
+      return newProduct;
+    } catch (error) {
+      console.error('Error creating product in service:', error);
+      throw new Error('An error occurred while adding product.');
+    }
+  }
 
-module.exports = { getProducts, updateProductById ,getProductDetailById, getBrandCategory, addBrand, addCategory };
+
+module.exports = { getProducts, updateProductById, getProductDetailById, getBrandCategory, addBrand, addCategory, addProduct };
