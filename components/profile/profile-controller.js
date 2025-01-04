@@ -3,7 +3,7 @@ const { getAccountDetailById, changeProfileById } = require('./profile-model');
 
 async function getProfilePage(req, res, next) {
     try {
-        const data = await getAccountDetailById("2");
+        const data = await getAccountDetailById(req.user.id);
         await renderProfilePage(res, data.account)
     } catch (error) {
         next(error);

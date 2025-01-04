@@ -62,7 +62,7 @@
         </th>
         <td class="px-6 py-4"><%= order.userId %></td>
 
-        <td class="px-6 py-4"><%= order.paymentMethod %></td>
+        <td class="px-6 py-4"><%= order.paymentMethods.methodName %></td>
         <td class="px-6 py-4"><%= order.total %></td>
         <td class="px-6 py-4"><%= order.status %></td>
         <td class="px-6 py-4"><%= order.createdAt %></td>
@@ -76,7 +76,7 @@
             <%= order.status %>
           </button>
           <button
-            class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+            class="px-4 py-2 text-white rounded bg-blue-500 h over:bg-blue-600"
             title="View"
             data-id="<%= order.id %>"
           >
