@@ -281,7 +281,7 @@ async function addCategory(category) {
         throw new Error('Unable to add category. Please try again later.');
     }
 }
-async function addProduct({ name, price, realPrice, stockQuantity, shortDescription, detail, material, status, weightKg, productImages }) {
+async function addProduct({ name, price, realPrice,brand, category, stockQuantity, shortDescription, detail, material, status, weightKg, productImages }) {
     try {
 
         const imageUrls = [];
@@ -299,6 +299,16 @@ async function addProduct({ name, price, realPrice, stockQuantity, shortDescript
                 name,
                 price: parseFloat(price),
                 realPrice: parseFloat(realPrice),
+                brands: {
+                    connect: {
+                        id: parseInt(brand, 10),
+                    },
+                },
+                categories: {
+                    connect: {
+                        id: parseInt(category, 10),
+                    },
+                },
                 stockQuantity: parseInt(stockQuantity, 10),
                 shortDescription,
                 detail,

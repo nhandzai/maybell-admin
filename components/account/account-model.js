@@ -1,5 +1,5 @@
 
-const limit = 6;
+const limit = 4;
 const { prisma } = require('../../config/config');
 
 async function getAccounts(req) {
