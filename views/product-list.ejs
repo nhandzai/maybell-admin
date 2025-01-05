@@ -7,10 +7,10 @@
       class="px-4 py-2 border rounded"
     />
     <input
-    type="text"
-    id="filter-brand"
-    placeholder="Filter by brand"
-    class="px-4 py-2 border rounded"
+      type="text"
+      id="filter-brand"
+      placeholder="Filter by brand"
+      class="px-4 py-2 border rounded"
     />
     <input
       type="text"
@@ -82,6 +82,13 @@
         <td class="px-6 py-4"><%= product.createdAt %></td>
         <td class="flex px-6 py-4 gap-4">
           <button
+            class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
+            title="Update"
+            data-id="<%= product.id %>"
+          >
+            Update
+          </button>
+          <button
             class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
             title="View"
             data-id="<%= product.id %>"
@@ -142,27 +149,27 @@
           scope="row"
           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
         >
-          ${ product.id }
+          ${product.id}
         </th>
-        <td class="px-6 py-4">${ product.name }</td>
-        <td class="px-6 py-4">${ product.price }</td>
-        <td class="px-6 py-4">${ product.brands.brand }</td>
-        <td class="px-6 py-4">${ product.categories.category }</td>
-        <td class="px-6 py-4">${ product.stockQuantity }</td>
-        <td class="px-6 py-4">${ product.totalPurchase }</td>
-        <td class="px-6 py-4">${ product.createdAt }</td>
+        <td class="px-6 py-4">${product.name}</td>
+        <td class="px-6 py-4">${product.price}</td>
+        <td class="px-6 py-4">${product.brands.brand}</td>
+        <td class="px-6 py-4">${product.categories.category}</td>
+        <td class="px-6 py-4">${product.stockQuantity}</td>
+        <td class="px-6 py-4">${product.totalPurchase}</td>
+        <td class="px-6 py-4">${product.createdAt}</td>
         <td class="flex px-6 py-4 gap-4">
           <button
             class="px-4 py-2 text-white rounded bg-red-500 hover:bg-red-600"
             title="Update"
-            data-id="${ product.id }"
+            data-id="${product.id}"
           >
             Update
           </button>
           <button
             class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
             title="View"
-            data-id="${ product.id }"
+            data-id="${product.id}"
           >
             View
           </button>
@@ -246,18 +253,16 @@
       const action = button.getAttribute("title");
       console.log(action);
       if (action === "Update") {
-      try {
-        const response = await fetch(`/api/productDetail?id=${productId}`);
-        const result = await response.json();
+        try {
+          const response = await fetch(`/api/productDetail?id=${productId}`);
+          const result = await response.json();
 
-        const brandCategoryResponse = await fetch("/api/brandCategory");
-        const brandCategoryData = await brandCategoryResponse.json();
-        
-       
+          const brandCategoryResponse = await fetch("/api/brandCategory");
+          const brandCategoryData = await brandCategoryResponse.json();
 
-        if (response.ok) {
-          const modalContainer = document.createElement("div");
-          modalContainer.innerHTML = `
+          if (response.ok) {
+            const modalContainer = document.createElement("div");
+            modalContainer.innerHTML = `
             <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
               <div class="bg-white p-8 rounded-lg w-1/2 overflow-y-auto h-3/4">
                 <h2 class="text-xl font-bold mb-4">Update Product</h2>
@@ -287,11 +292,14 @@
                       <option value="" disabled selected>Select a brand</option>
                       
                         ${brandCategoryData.brandCategory.brands
-                       
+
                           .map(
                             (brand) =>
-                         
-                              `<option value="${brand.id}" ${result.product.brandId === brand.id ? 'selected' : ''}>${brand.id}. ${brand.brand}</option>`
+                              `<option value="${brand.id}" ${
+                                result.product.brandId === brand.id
+                                  ? "selected"
+                                  : ""
+                              }>${brand.id}. ${brand.brand}</option>`
                           )
                           .join("")}
                       </select>
@@ -304,7 +312,11 @@
                         ${brandCategoryData.brandCategory.categories
                           .map(
                             (category) =>
-                              `<option value="${category.id}" ${result.product.categoryId === category.id ? 'selected' : ''}>${category.id}. ${category.category}</option>`
+                              `<option value="${category.id}" ${
+                                result.product.categoryId === category.id
+                                  ? "selected"
+                                  : ""
+                              }>${category.id}. ${category.category}</option>`
                           )
                           .join("")}
                       </select>
@@ -348,9 +360,17 @@
                         id="status"
                         class="border p-2 w-3/4"
                       >
-                        <option value="On stock" ${result.product.status === 'On stock' ? 'selected' : ''}>On stock</option>
-                        <option value="Out of stock" ${result.product.status === 'Out of stock' ? 'selected' : ''}>Out of stock</option>
-                        <option value="Suspend" ${result.product.status === 'Suspend' ? 'selected' : ''}>Suspend</option>
+                        <option value="On stock" ${
+                          result.product.status === "On stock" ? "selected" : ""
+                        }>On stock</option>
+                        <option value="Out of stock" ${
+                          result.product.status === "Out of stock"
+                            ? "selected"
+                            : ""
+                        }>Out of stock</option>
+                        <option value="Suspend" ${
+                          result.product.status === "Suspend" ? "selected" : ""
+                        }>Suspend</option>
                       </select>
                     </div>
                     <div class="flex">
@@ -441,72 +461,94 @@
           </div>
           `;
 
-          document.body.appendChild(modalContainer);
-          window.closeModal = function () {
-            document.body.removeChild(modalContainer);
-          };
+            document.body.appendChild(modalContainer);
+            window.closeModal = function () {
+              document.body.removeChild(modalContainer);
+            };
 
-          const form = document.getElementById("productForm");
-          form.addEventListener("submit", async (event) => {
-            event.preventDefault();
+            const form = document.getElementById("productForm");
+            form.addEventListener("submit", async (event) => {
+              event.preventDefault();
 
-            const formData = new FormData();
+              const formData = new FormData();
 
-            // Thêm các dữ liệu văn bản vào formData
-            formData.append("id", productId);
-            formData.append("name", document.getElementById("name").value);
-            formData.append("categoryId", document.getElementById("category").value);
-            formData.append("brandId", document.getElementById("brand").value);
-            formData.append("price", document.getElementById("price").value);
-            formData.append("realPrice", document.getElementById("realPrice").value);
-            formData.append("stockQuantity", document.getElementById("stockQuantity").value);
-            formData.append("status", document.getElementById("status").value);
-            formData.append("shortDescription", document.getElementById("shortDescription").value);
-            formData.append("detail", document.getElementById("detail").value);
-            formData.append("material", document.getElementById("material").value);
-            formData.append("weightKg", document.getElementById("weightKg").value);
-            
-           
-            const images = document.getElementById("image").files;
-            for (let i = 0; i < images.length; i++) {
-              formData.append("updateImages", images[i]);
-            }
-          
-          
-            const deleteImages = Array.from(
-              document.querySelectorAll('input[type="checkbox"]:checked')
-            ).map((checkbox) => checkbox.value);
-            formData.append("deleteImages", JSON.stringify(deleteImages));
-          
-            try {
-             
-              const response = await fetch("/api/productUpdate", {
-                method: "POST",
-                body: formData,
-              });
-          
+              // Thêm các dữ liệu văn bản vào formData
+              formData.append("id", productId);
+              formData.append("name", document.getElementById("name").value);
+              formData.append(
+                "categoryId",
+                document.getElementById("category").value
+              );
+              formData.append(
+                "brandId",
+                document.getElementById("brand").value
+              );
+              formData.append("price", document.getElementById("price").value);
+              formData.append(
+                "realPrice",
+                document.getElementById("realPrice").value
+              );
+              formData.append(
+                "stockQuantity",
+                document.getElementById("stockQuantity").value
+              );
+              formData.append(
+                "status",
+                document.getElementById("status").value
+              );
+              formData.append(
+                "shortDescription",
+                document.getElementById("shortDescription").value
+              );
+              formData.append(
+                "detail",
+                document.getElementById("detail").value
+              );
+              formData.append(
+                "material",
+                document.getElementById("material").value
+              );
+              formData.append(
+                "weightKg",
+                document.getElementById("weightKg").value
+              );
 
-              const result = await response.json();
-              if (response.ok) {
-                alert("Product updated successfully");
-                const url = new URL(window.location);
-                const page = url.searchParams.get("page") || 1;
-                fetchAndUpdate(page);
-                closeModal();
-              } else {
-                alert("Failed to update the product");
+              const images = document.getElementById("image").files;
+              for (let i = 0; i < images.length; i++) {
+                formData.append("updateImages", images[i]);
               }
-            } catch (error) {
-              console.error("Error:", error);
-            }
-          });
 
-        } else {
-          alert("Failed to fetch the product details");
+              const deleteImages = Array.from(
+                document.querySelectorAll('input[type="checkbox"]:checked')
+              ).map((checkbox) => checkbox.value);
+              formData.append("deleteImages", JSON.stringify(deleteImages));
+
+              try {
+                const response = await fetch("/api/productUpdate", {
+                  method: "POST",
+                  body: formData,
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                  alert("Product updated successfully");
+                  const url = new URL(window.location);
+                  const page = url.searchParams.get("page") || 1;
+                  fetchAndUpdate(page);
+                  closeModal();
+                } else {
+                  alert("Failed to update the product");
+                }
+              } catch (error) {
+                console.error("Error:", error);
+              }
+            });
+          } else {
+            alert("Failed to fetch the product details");
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
-      } catch (error) {
-        console.error("Error:", error);
-      }
       } else if (action === "View") {
         try {
           const response = await fetch(`/api/productDetail?id=${productId}`);
