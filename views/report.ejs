@@ -41,7 +41,7 @@
             labels: data.product.month.map(product => product.name),
             data: data.product.month.map(product => product.totalSales),
             label: "Quantity Sold",
-            title: `Monthly Sales Report (${date.split('-')[0]} - Full Year)`,
+            title: `Monthly Sales Report (${date} - Full Month)`,
           },
 
         ];
@@ -79,7 +79,7 @@
             labels: data.product.topMonth.map(product => product.name),
             data: data.product.topMonth.map(product => product.totalSales),
             label: "Quantity Sold",
-            title: `Top 3 Products (Monthly) - ${date.split('-')[0]}`,
+            title: `Top 3 Products (Monthly) - ${date}`,
           },
 
         ];
