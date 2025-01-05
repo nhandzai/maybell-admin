@@ -1,80 +1,118 @@
 const fs = require('fs').promises;
 const path = require('path');
 const limit = 3;
+const { prisma } = require('../../config/config');
 
 async function getOrders(req) {
-    const filePath = path.join(__dirname, '../../data/order-list.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const ordersData = JSON.parse(jsonData);
+    try {
+        const page = parseInt(req.query.page) || 1;
 
-    const page = parseInt(req.query.page) || 1;
-    const statusFilter = req.query.status || '';
-    const userIdFilter = req.query.userId || '';
-    const sortField = req.query.sortField || '';
-    const sortOrder = req.query.sortOrder || '';
+        const statusFilter = req.query.status || '';
+        const userIdFilter = req.query.userId || '';
+        const sortField = req.query.sortField || 'createdAt';
+        const sortOrder = req.query.sortOrder === 'desc' ? 'desc' : 'asc';
 
-    const filteredOrders = ordersData.filter(order => {
-        const matchesStatus = statusFilter ? order.status.toLowerCase().includes(statusFilter.toLowerCase()) : true;
-        const matchesUserId = userIdFilter ? order.userId.toLowerCase().includes(userIdFilter.toLowerCase()) : true;
-        return matchesStatus && matchesUserId;
-    });
 
-    if (sortField) {
-        filteredOrders.sort((a, b) => {
-            const fieldA = a[sortField];
-            const fieldB = b[sortField];
+        const whereClause = {
+            AND: [
+                statusFilter ? { status: { contains: statusFilter, mode: 'insensitive' } } : {},
+                userIdFilter ? { userId: { contains: userIdFilter, mode: 'insensitive' } } : {},
+            ],
+        };
 
-            if (sortOrder === 'asc') {
-                return fieldA > fieldB ? 1 : fieldA < fieldB ? -1 : 0;
-            } else if (sortOrder === 'desc') {
-                return fieldA < fieldB ? 1 : fieldA > fieldB ? -1 : 0;
-            }
-            return 0;
+
+        const orderByClause = sortField ? { [sortField]: sortOrder } : undefined;
+
+
+        const orders = await prisma.orders.findMany({
+            where: whereClause,
+            include: {
+                users: {
+                    select: { fullName: true },
+                },
+                paymentMethods: true,
+            },
+            orderBy: orderByClause,
+            skip: (page - 1) * limit,
+            take: limit,
         });
+
+
+        const totalOrders = await prisma.orders.count({ where: whereClause });
+        const totalPages = Math.ceil(totalOrders / limit);
+
+        return {
+            orders: orders.map(order => ({
+                ...order,
+                userFullName: order.users.fullName,
+            })),
+            page,
+            pageNumber: totalPages,
+        };
+
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        throw new Error('Unable to fetch orders. Please try again later.');
     }
-
-    const offset = (page - 1) * limit;
-    const orders = filteredOrders.slice(offset, offset + limit);
-    const pageNumber = Math.ceil(filteredOrders.length / limit);
-
-    return {
-        orders: orders,
-        page: page,
-        pageNumber: pageNumber,
-    };
 }
+
+
 
 async function getOrderDetailById(id) {
-    const filePath = path.join(__dirname, '../../data/order-list.json');
-    const jsonData = await fs.readFile(filePath, 'utf8');
-    const ordersData = JSON.parse(jsonData);
-
-    const order = ordersData.find(order => order.id === id);
-
-    if (!order) {
-        throw new Error(`order with ID ${id} not found.`);
-    }
-    return {
-        message: `Details of order ${id}`,
-        order: order
-    }
-}
-
-async function changeOrderStatusById(id, newStatus) {
-    const filePath = path.join(__dirname, '../../data/order-list.json');
+    const numericId = parseInt(id, 10);
     try {
-        const jsonData = await fs.readFile(filePath, 'utf8');
-        const ordersData = JSON.parse(jsonData);
-        const order = ordersData.find(order => order.id === id);
+        const order = await prisma.orders.findUnique({
+            where: { id: numericId },
+            include: {
+                users: {
+                    select: { fullName: true },
+                },
+                paymentMethods: true,
+                orderProducts: {
+                    include: {
+                        products: true,
+                    }
+                }
+            },
+        });
 
         if (!order) {
             throw new Error(`Order with ID ${id} not found.`);
         }
 
-        order.status = newStatus;
-        await fs.writeFile(filePath, JSON.stringify(ordersData, null, 2), 'utf8');
+        return {
+            message: `Details of order ${id}`,
+            order: {
+                ...order,
+                userFullName: order.users.fullName,
+            },
+        };
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+        throw new Error('Failed to fetch order details.');
+    }
+}
 
-        return { message: 'Order status updated successfully.', order };
+async function changeOrderStatusById(id, newStatus) {
+    const numericId = parseInt(id, 10);
+    try {
+        const order = await prisma.orders.findUnique({
+            where: { id:numericId },
+        });
+
+        if (!order) {
+            throw new Error(`Order with ID ${id} not found.`);
+        }
+
+        const updatedOrder = await prisma.orders.update({
+            where: { id:numericId },
+            data: { status: newStatus, updatedAt: new Date() },
+        });
+
+        return {
+            message: 'Order status updated successfully.',
+            order: updatedOrder,
+        };
     } catch (error) {
         console.error('Error updating order status:', error);
         throw new Error('Failed to update order status.');

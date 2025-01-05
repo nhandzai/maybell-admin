@@ -1,0 +1,99 @@
+<!-- Login card  -->
+<section class="mx-auto flex-grow w-full mt-10 mb-10 max-w-[1200px] px-5">
+  <div class="container mx-auto border px-5 py-5 shadow-sm md:w-1/2">
+    <div class="">
+      <p class="text-4xl font-bold">LOGIN</p>
+      <p>Welcome back, customer!</p>
+    </div>
+
+    <form id="loginForm" class="mt-6 flex flex-col">
+      <label for="email">Email Address</label>
+      <input id="email" class="mb-3 mt-3 border px-4 py-2" type="email" placeholder="youremail@domain.com" />
+      <div id="emailError" class="text-pink-800 hidden px-3 py-2 mt-2 rounded-md text-sm"></div>
+      <!-- Error message container -->
+
+      <label for="password">Password</label>
+      <input id="password" class="mt-3 border px-4 py-2" type="password"
+        placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;" />
+      <div id="passwordError" class="text-pink-800 hidden px-3 py-2 mt-2 rounded-md text-sm"></div>
+      <!-- Error message container -->
+
+      <div class="mt-4 flex justify-between">
+        <div  class="flex gap-2">
+          <input type="checkbox" id="rememberMe" />
+          <label for="rememberMe">Remember me</label>
+        </div>
+        <a class="text-violet-900"></a>
+      </div>
+
+      <button type="button" id="loginButton" class="my-5 w-full bg-violet-900 py-2 text-white">LOGIN</button>
+    </form>
+
+   
+    
+  </div>
+</section>
+<!-- /Login Card  -->
+
+<script >
+  document.addEventListener('DOMContentLoaded', () => {
+  
+    const savedEmail = localStorage.getItem('email');
+    const savedPassword = localStorage.getItem('password');
+    const rememberMe = localStorage.getItem('rememberMe') === 'true';
+
+    if (rememberMe && savedEmail && savedPassword) {
+      document.getElementById('email').value = savedEmail;
+      document.getElementById('password').value = savedPassword;
+      document.getElementById('rememberMe').checked = true;
+    }
+
+    document.getElementById('loginButton').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const rememberMe = document.getElementById('rememberMe').checked;
+
+      // Clear previous error messages
+      document.getElementById('emailError').classList.add('hidden');
+      document.getElementById('passwordError').classList.add('hidden');
+
+      let hasError = false;
+
+      // Validate inputs
+      if (!email || !password) {
+        if (!email) {
+          document.getElementById('emailError').textContent = 'Email is required.';
+          document.getElementById('emailError').classList.remove('hidden');
+        }
+        if (!password) {
+          document.getElementById('passwordError').textContent = 'Password is required.';
+          document.getElementById('passwordError').classList.remove('hidden');
+        }
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      try {
+        const response = await fetch('/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          window.location.href = '/';
+        } else {
+          document.getElementById('emailError').textContent = data.message || 'Login failed.';
+          document.getElementById('emailError').classList.remove('hidden');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('emailError').textContent = 'An error occurred during login.';
+        document.getElementById('emailError').classList.remove('hidden');
+      }
+    });
+  });
+</script>

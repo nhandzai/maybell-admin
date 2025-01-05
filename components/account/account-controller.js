@@ -1,6 +1,14 @@
-const { renderAccountPage } = require('./account-view');
+const { renderAccountPage,renderLogInPage } = require('./account-view');
 const { getAccounts, banAccountById, getAccountDetailById } = require('./account-model');
 
+async function getLogInPage(req, res, next) {
+  try {
+    
+    await renderLogInPage(res);
+  } catch (error) {
+    next(error);
+  }
+}
 async function getAccountPage(req, res, next) {
   try {
     const accounts = await getAccounts(req);
@@ -51,4 +59,4 @@ async function getAccountDetail(req, res, next) {
 }
 
 
-module.exports = { getAccountPage, getAccountPageAPI, banAccount, getAccountDetail };
+module.exports = { getAccountPage, getAccountPageAPI, banAccount, getAccountDetail, getLogInPage };

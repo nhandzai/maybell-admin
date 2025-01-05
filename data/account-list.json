@@ -13,7 +13,7 @@
     "email": "john.doe@example.com",
     "createdAt": "11/15/2024",
     "isAdmin": 0,
-    "isBan": 0
+    "isBan": 1
   },
   {
     "id": "3",

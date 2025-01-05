@@ -1,0 +1,203 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model SequelizeMeta {
+  name String @id @unique(map: "name") @db.VarChar(255)
+}
+
+model brands {
+  id        Int        @id @default(autoincrement())
+  brand     String     @db.VarChar(255)
+  createdAt DateTime   @default(now()) @db.DateTime(0)
+  updatedAt DateTime   @default(now()) @db.DateTime(0)
+  products  products[]
+}
+
+model carts {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  quantity  Int
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, map: "cart_ibfk_1")
+  products  products @relation(fields: [productId], references: [id], onDelete: Cascade, map: "cart_ibfk_2")
+
+  @@unique([userId, productId], map: "unique_user_product")
+  @@index([productId], map: "productId")
+}
+
+model categories {
+  id        Int        @id @default(autoincrement())
+  category  String?    @db.VarChar(255)
+  image     String?    @db.VarChar(255)
+  createdAt DateTime   @default(now()) @db.DateTime(0)
+  updatedAt DateTime   @default(now()) @db.DateTime(0)
+  products  products[]
+}
+
+model orderProducts {
+  id        Int      @id @default(autoincrement())
+  orderId   Int
+  productId Int
+  quantity  Int
+  createdAt DateTime @default(now()) @db.Timestamp(0)
+  updatedAt DateTime @default(now()) @db.Timestamp(0)
+  orders    orders   @relation(fields: [orderId], references: [id], onDelete: Cascade, map: "order_product_ibfk_1")
+  products  products @relation(fields: [productId], references: [id], onDelete: Cascade, map: "order_product_ibfk_2")
+
+  @@unique([orderId, productId], map: "unique_order_product")
+  @@index([productId], map: "productId")
+}
+
+model orders {
+  id              Int             @id @default(autoincrement())
+  userId          Int
+  paymentMethodId Int?
+  status          String          @db.VarChar(20)
+  createdAt       DateTime        @default(now()) @db.Timestamp(0)
+  updatedAt       DateTime        @default(now()) @db.Timestamp(0)
+  address         String          @db.VarChar(45)
+  country         String          @db.VarChar(45)
+  city            String          @db.VarChar(45)
+  total           Int
+  orderProducts   orderProducts[]
+  users           users           @relation(fields: [userId], references: [id], onDelete: Cascade, map: "orders_ibfk_1")
+  paymentMethods  paymentMethods? @relation(fields: [paymentMethodId], references: [id], map: "orders_ibfk_2")
+
+  @@index([paymentMethodId], map: "paymentMethodId")
+  @@index([userId], map: "userId")
+}
+
+model paymentMethods {
+  id         Int      @id @default(autoincrement())
+  methodName String   @db.VarChar(50)
+  createdAt  DateTime @default(now()) @db.Timestamp(0)
+  updatedAt  DateTime @default(now()) @db.Timestamp(0)
+  orders     orders[]
+}
+
+model productImages {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  image     String?  @db.VarChar(255)
+  isMain    Boolean? @default(false)
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @db.DateTime(0)
+  products  products @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "productImages_ibfk_1")
+
+  @@index([productId], map: "productId")
+}
+
+model productSizes {
+  id              Int      @id @default(autoincrement())
+  productId       Int
+  sizeId          Int
+  createdAt       DateTime @db.DateTime(0)
+  updatedAt       DateTime @default(now()) @db.DateTime(0)
+  productSizescol String?  @default("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP") @db.VarChar(45)
+  products        products @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "productSizes_ibfk_1")
+  sizes           sizes    @relation(fields: [sizeId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "productSizes_ibfk_2")
+
+  @@index([productId], map: "productId")
+  @@index([sizeId], map: "sizeId")
+}
+
+model products {
+  id               Int             @id @default(autoincrement())
+  name             String?         @db.VarChar(255)
+  price            Float?          @db.Float
+  shortDescription String?         @db.Text
+  detail           String?         @db.Text
+  material         String?         @db.VarChar(255)
+  weightKg         Float?          @db.Float
+  realPrice        Float?          @db.Float
+  brandId          Int?
+  categoryId       Int?
+  stockQuantity    Int?
+  createdAt        DateTime        @default(now()) @db.DateTime(0)
+  updatedAt        DateTime        @default(now()) @db.DateTime(0)
+  status           String          @db.VarChar(45)
+  carts            carts[]
+  orderProducts    orderProducts[]
+  productImages    productImages[]
+  productSizes     productSizes[]
+  brands           brands?         @relation(fields: [brandId], references: [id], onUpdate: NoAction, map: "products_ibfk_1")
+  categories       categories?     @relation(fields: [categoryId], references: [id], onUpdate: NoAction, map: "products_ibfk_2")
+  reviews          reviews[]
+  wishlists        wishlists[]
+
+  @@index([brandId], map: "brandId")
+  @@index([categoryId], map: "categoryId")
+}
+
+model reviews {
+  id        Int      @id @default(autoincrement())
+  productId Int
+  userId    Int
+  rating    Int?
+  comment   String?  @db.Text
+  createdAt DateTime @default(now()) @db.DateTime(0)
+  updatedAt DateTime @default(now()) @db.DateTime(0)
+  products  products @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reviews_ibfk_1")
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reviews_ibfk_2")
+
+  @@index([productId], map: "productId")
+  @@index([userId], map: "userId")
+}
+
+model sizes {
+  id           Int            @id @default(autoincrement())
+  size         String         @unique(map: "size") @db.VarChar(255)
+  createdAt    DateTime       @db.DateTime(0)
+  updatedAt    DateTime       @default(now()) @db.DateTime(0)
+  sizescol     String?        @default("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP") @db.VarChar(45)
+  productSizes productSizes[]
+}
+
+model users {
+  id         Int         @id @default(autoincrement())
+  fullName   String      @db.VarChar(255)
+  email      String      @unique(map: "email") @db.VarChar(255)
+  password   String?     @db.VarChar(255)
+  isAdmin    Boolean
+  country    String?     @db.VarChar(255)
+  city       String?     @db.VarChar(255)
+  createdAt  DateTime    @default(now()) @db.DateTime(0)
+  updatedAt  DateTime    @default(now()) @db.DateTime(0)
+  phone      String?     @db.VarChar(20)
+  sex        users_sex?
+  bio        String?     @db.Text
+  googleId   String?     @db.VarChar(255)
+  isVerified Int?        @default(0) @db.TinyInt
+  avatar     String?     @db.VarChar(255)
+  isBan      Int         @default(0) @db.TinyInt
+  carts      carts[]
+  orders     orders[]
+  reviews    reviews[]
+  wishlists  wishlists[]
+}
+
+model wishlists {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  productId Int
+  createdAt DateTime @db.DateTime(0)
+  updatedAt DateTime @db.DateTime(0)
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "wishlists_ibfk_1")
+  products  products @relation(fields: [productId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "wishlists_ibfk_2")
+
+  @@index([productId], map: "productId")
+  @@index([userId], map: "userId")
+}
+
+enum users_sex {
+  Male
+  Female
+}

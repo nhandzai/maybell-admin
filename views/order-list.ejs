@@ -62,7 +62,7 @@
         </th>
         <td class="px-6 py-4"><%= order.userId %></td>
 
-        <td class="px-6 py-4"><%= order.paymentMethod %></td>
+        <td class="px-6 py-4"><%= order.paymentMethods.methodName %></td>
         <td class="px-6 py-4"><%= order.total %></td>
         <td class="px-6 py-4"><%= order.status %></td>
         <td class="px-6 py-4"><%= order.createdAt %></td>
@@ -76,7 +76,7 @@
             <%= order.status %>
           </button>
           <button
-            class="px-4 py-2 text-white rounded bg-blue-500 hover:bg-blue-600"
+            class="px-4 py-2 text-white rounded bg-blue-500 h over:bg-blue-600"
             title="View"
             data-id="<%= order.id %>"
           >
@@ -136,7 +136,7 @@
                       ${order.id}
                     </th>
                     <td class="px-6 py-4">${order.userId}</td>
-                    <td class="px-6 py-4">${order.paymentMethod}</td>
+                    <td class="px-6 py-4">${order.paymentMethods.methodName}</td>
                     <td class="px-6 py-4">${order.total}</td>
                     <td class="px-6 py-4">${order.status}</td>
                     <td class="px-6 py-4">${order.createdAt}</td>
@@ -286,7 +286,7 @@
                 (product) => `
             <tr>
               <td class="border px-4 py-2">${product.productId}</td>
-              <td class="border px-4 py-2">${product.name}</td>
+              <td class="border px-4 py-2">${product.products.name}</td>
               <td class="border px-4 py-2">${product.quantity}</td>
             </tr>
           `
@@ -321,7 +321,7 @@
                           <label class="w-1/4 font-semibold">Customer name:</label>
                           <input
                             type="text"
-                            value="${result.order.userFullname}"
+                            value="${result.order.userFullName}"
                             readonly
                             class="border p-2 w-3/4"
                           />
@@ -330,7 +330,7 @@
                           <label class="w-1/4 font-semibold">Payment method:</label>
                           <input
                             type="text"
-                            value="${result.order.paymentMethod}"
+                            value="${result.order.paymentMethods.methodName}"
                             readonly
                             class="border p-2 w-3/4"
                           />
