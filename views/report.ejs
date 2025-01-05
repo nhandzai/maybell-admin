@@ -30,18 +30,18 @@
           {
             id: 2,
             type: "pie",
-            labels: data.product.month.map(product => product.name),
-            data: data.product.month.map(product => product.totalSales),
+            labels: data.product.week.map(product => product.name),
+            data: data.product.week.map(product => product.totalSales),
             label: "Quantity Sold",
             title: `Weekly Sales Report (${date} - Weekly Range)`,
           },
           {
             id: 3,
             type: "pie",
-            labels: data.product.year.map(product => product.name),
-            data: data.product.year.map(product => product.totalSales),
+            labels: data.product.month.map(product => product.name),
+            data: data.product.month.map(product => product.totalSales),
             label: "Quantity Sold",
-            title: `Yearly Sales Report (${date.split('-')[0]} - Full Year)`,
+            title: `Monthly Sales Report (${date.split('-')[0]} - Full Year)`,
           },
 
         ];
@@ -68,18 +68,18 @@
           {
             id: 5,
             type: "bar",
-            labels: data.product.topMonth.map(product => product.name),
-            data: data.product.topMonth.map(product => product.totalSales),
+            labels: data.product.topWeek.map(product => product.name),
+            data: data.product.topWeek.map(product => product.totalSales),
             label: "Quantity Sold",
             title: `Top 3 Products (Weekly) - ${date}`,
           },
           {
             id: 6,
             type: "bar",
-            labels: data.product.topYear.map(product => product.name),
-            data: data.product.topYear.map(product => product.totalSales),
+            labels: data.product.topMonth.map(product => product.name),
+            data: data.product.topMonth.map(product => product.totalSales),
             label: "Quantity Sold",
-            title: `Top 3 Products (Yearly) - ${date.split('-')[0]}`,
+            title: `Top 3 Products (Monthly) - ${date.split('-')[0]}`,
           },
 
         ];
