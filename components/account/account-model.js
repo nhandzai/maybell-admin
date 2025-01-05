@@ -15,8 +15,8 @@ async function getAccounts(req) {
 
         const whereClause = {
             AND: [
-                emailFilter ? { email: { contains: emailFilter, mode: 'insensitive' } } : {},
-                fullNameFilter ? { fullName: { contains: fullNameFilter, mode: 'insensitive' } } : {},
+                emailFilter ? { email: { contains: emailFilter } } : {},
+                fullNameFilter ? { fullName: { contains: fullNameFilter } } : {},
             ],
         };
 

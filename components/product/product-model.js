@@ -15,32 +15,31 @@ async function getProducts(req) {
 
         const whereClause = {
             AND: [
-                categoryFilter ? { category: { contains: categoryFilter, mode: 'insensitive' } } : {},
-                nameFilter ? { name: { contains: nameFilter, mode: 'insensitive' } } : {},
-                brandFilter ? { brand: { contains: brandFilter, mode: 'insensitive' } } : {},
+                categoryFilter ? { categories: { category: { contains: categoryFilter} } } : {},
+                nameFilter ? { name: { contains: nameFilter } } : {},
+                brandFilter ? { brands: { brand: { contains: brandFilter } } } : {},
             ],
         };
 
         const orderByClause = sortField ? { [sortField]: sortOrder } : undefined;
 
-
+        // Lấy danh sách sản phẩm
         const products = await prisma.products.findMany({
             where: whereClause,
             include: {
                 brands: true,
                 categories: true,
             },
-
             orderBy: orderByClause,
             skip: (page - 1) * limit,
             take: limit,
         });
 
-
+        // Lấy tổng số sản phẩm
         const totalProducts = await prisma.products.count({ where: whereClause });
         const totalPages = Math.ceil(totalProducts / limit);
 
-
+        // Lấy dữ liệu về số lượng sản phẩm đã bán
         const salesData = await prisma.orderProducts.groupBy({
             by: ['productId'],
             _sum: {
@@ -52,6 +51,8 @@ async function getProducts(req) {
                 },
             },
         });
+
+        // Gắn thêm dữ liệu tổng số bán vào mỗi sản phẩm
         const productsWithSales = products.map(product => {
             const sales = salesData.find(data => data.productId === product.id);
             return {
@@ -70,6 +71,8 @@ async function getProducts(req) {
         throw new Error('Unable to fetch products. Please try again later.');
     }
 }
+
+
 
 
 
@@ -200,7 +203,7 @@ async function updateProductById(id, data, productImages) {
                         id: parseInt(data.brandId, 10)
                     }
                 },
-                price: parseFloat(data.price), // Chuyển price thành số thực nếu cần
+                price: parseFloat(data.price),
                 realPrice: parseFloat(data.realPrice),
                 stockQuantity: parseInt(data.stockQuantity, 10),
                 status: data.status,
