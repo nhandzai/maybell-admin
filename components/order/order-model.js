@@ -11,13 +11,14 @@ async function getOrders(req) {
         const userIdFilter = req.query.userId || '';
         const sortField = req.query.sortField || 'createdAt';
         const sortOrder = req.query.sortOrder === 'desc' ? 'desc' : 'asc';
+        const numericId = parseInt(userIdFilter, 10);
 
 
         const whereClause = {
             AND: [
-                statusFilter ? { status: { contains: statusFilter, mode: 'insensitive' } } : {},
-                userIdFilter ? { userId: { contains: userIdFilter, mode: 'insensitive' } } : {},
-            ],
+                statusFilter ? { status: statusFilter } : undefined, // So sánh bằng thay vì contains
+                userIdFilter ? { userId: numericId || userIdFilter } : undefined, // So sánh bằng, hỗ trợ cả số và chuỗi
+            ].filter(Boolean), 
         };
 
 
