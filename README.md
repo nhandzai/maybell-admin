@@ -29,7 +29,7 @@ Visit the application at:
 ### Build Tailwind CSS  
 To compile Tailwind CSS for your project, run:  
 ```bash  
-npx tailwindcss -o public/stylesheets/tailwind-output.css --watch  
+npx tailwindcss -o public/stylesheets/style.css --watch  
 ```  
 ---
 ## License  
